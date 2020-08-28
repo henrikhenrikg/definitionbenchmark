@@ -65,6 +65,7 @@ $>>>$\hspace{1cm}}}}}
 \enoteson
 %\enotesoff
 
+\def\uprm#1#2{_#2\mbox{$^{\hbox{\scriptsize #1}}$}}
 
 \begin{document}
 \maketitle
@@ -291,30 +292,50 @@ In principle, any NLP model can be tested on D2W and W2D.
 In this paper, we are particularly
 interested in testing language models. To this end, we 
 convert the data to a format that is suitable for language
-models, i.e., to cloze-style questions.  As shown in Table
-\ref{tab:patterns}, we define different templates for masked
+models, i.e., to cloze-style questions as
+shown in Table
+\ref{tab:patterns}. The basic quantity that allows us to
+assess the compatibility of a word $t$ and a definition is the
+probability of
+$t$ being generated for 
+the underscore when the definition is substituted for $<$DEF$>$.
+More precisely, we compute the probability that the string
+representation of $t$ is being generated.
+We will denote the string representation of synset $t$ by
+$\bm{t}$. 
+We obtain the string representation by removing
+the word type and sense information from the name of the
+synset and replacing underscores with white space. For
+example, synset \emph{miscalculation.n.01} is represented by
+the string ``miscalculation'' and synset
+\emph{warm\_up.v.04} is represented by the string ``warm
+up''.
+
+Table
+\ref{tab:patterns}
+shows
+that we define different templates for masked
 and autoregressive language models. We define alternatives
 (e.g., ``definition of \underline{\hspace{3mm}}'', 
 ``definition of a \underline{\hspace{3mm}}'', 
 ``definition of an \underline{\hspace{3mm}}'') and will then
 use, for each word, the alternative that gives the best
-result. This allows us to generate  WDLMPro automatically as opposed to having to manually postedit alarge dataset.
+result. This allows us to generate  WDLMPro automatically as
+opposed to having to manually postedit a large dataset.
 This is justified because we are interested in
 how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
 
 \enote{hs}{the following should be more formal -- we can
   probably use Timo's notation}
 
-For both tasks, we calculate the probability for the
-string representation of the synset (i.e., $t \rightarrow
-\bm{t}$). We obtain the string representation by removing
-the word type and sense information from the name of the
-synset and replacing underscores with white space. For
-example, synset \emph{miscalculation.n.01} is represented by
-the string ``miscalculation'' and synset
-\emph{warm\_up.v.04} is represented by the string ``warm
-up''.  We then rank the candidates in ${\cal G}(t)$ based
-on their probabilities.
+
+%For both tasks, we calculate the probability
+%that the string
+%of being generated for the underscore
+%for the
+%string representation of the synset (i.e., $t \rightarrow
+%\bm{t}$).    We then rank the candidates in ${\cal G}(t)$ based
+%on their probabilities.
 
 \begin{table*}
 \centering
@@ -342,15 +363,28 @@ the language model has to predict.}
   both cases}
 \enote{ks}{Is it formal enough with the equations?} 
   
-In this study, we focus on masked language models and autoregressive language models. For a masked language model $M$, probability of a candidate $c \in {\cal G}(t)$ on W2D task is calculated as:
+In this study, we focus on masked language models and
+autoregressive language models. For a masked language model
+$M$, the probability of a candidate $c \in {\cal G}(t)$ on W2D  is calculated as:
 
 \begin{equation*}
     P_{M_{W2D}}^c = \prod_{i=1}^{N}P(\bm{t}^i~|~Q_{N}^{c})
+\end{equation*}
+\begin{equation*}
+  P\uprm{W2D}{M} (c|t) = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|D(c,|\bm{t}|))
 \end{equation*}
 where $\bm{t}$ is the target word of ${\cal G}(t)$ tokenized into $N$ tokens, $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^N]$. $Q_{N}^{c}$ is the input query containing the definition of candidate $c$ and $N$ consecutive mask tokens. For an autoregressive language model $A$, we calculate the probability of generating the target word by multiplying the probabilities of individual tokens given the query $Q^c$ and previous correct tokens of the target:
 
 \begin{equation*}
     P_{A_{W2D}}^c = \prod_{i=1}^{N}P(\bm{t}^i~|~[Q^{c},\bm{t}^{1},...,\bm{t}^{i-1}])
+\end{equation*}
+
+\begin{equation*}
+    P\uprm{W2D}{A} = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|D(c),\bm{t}^{1},...,\bm{t}^{i-1})
+\end{equation*}
+
+\begin{equation*}
+ P(w_1|w_2w_3)
 \end{equation*}
 
 For D2W, we need to compare the prediction probabilities of
@@ -363,10 +397,21 @@ follow the approach used by \newcite{Xiong20Encyclopedia}. For masked language m
 \begin{equation*}
     P_{M_{D2W}}^c = \frac{1}{L}\sum_{i=1}^{L}\text{log}~P(\bm{c}^i~|~Q_{L}^{t})
 \end{equation*}
-where the candidate word $\bm{c}$ is tokenized to $L$ tokens, $\bm{c} = [\bm{c}^1, \bm{c}^2,...,\bm{c}^N]$. For autoregressive models, we use the probability of only the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
+\begin{equation*}
+    P\uprm{D2W}{M}(c|t) =
+    \frac{1}{|\bm{c}|}\sum_{i=1}^{|\bm{c}|}\log P(\bm{c}^i |
+    D(t,|\bm{c}|))
+\end{equation*}
+where the candidate word $\bm{c}$ is tokenized to $L$ tokens, $\bm{c} = [\bm{c}^1, \bm{c}^2,...,\bm{c}^L]$. For autoregressive models, we use the probability of only the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
 
 \begin{equation*}
     P_{A_{D2W}}^c = P(\bm{c}^1~|~Q^{t})
+\end{equation*}
+
+\begin{equation*}
+    P\uprm{D2W}{A}(c|t) =
+     P(\bm{c}^1 |
+    D(t))
 \end{equation*}
 
 We apply our probing test to two different pretrained
@@ -428,10 +473,10 @@ score) while RoBERTa large performs best for  verbs
 
 \begin{table}
     \centering
-    \begin{tabular}{l|cccc}
+    \begin{tabular}{l|rrrr}
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
-         & P@1 & rank s. & P@1 & rank s. \\ \hline
+         & P@1 & rank s. & P@1 & \multicolumn{1}{c}{rank s.} \\ \hline
      Bert$_{b}$ & 43.7 & 0.82 & 40.7 & 0.82 \\
      Bert$_{l}$ & 44.3 & 0.83 & 39.0 & 0.81 \\
      Roberta$_{b}$ & 45.5 & 0.83 & 49.1 & 0.85 \\
@@ -440,7 +485,7 @@ score) while RoBERTa large performs best for  verbs
      GPT-2$_{m}$ & 47.6 & 0.82 & 42.3 & 0.80 \\
      GPT-2$_{l}$ & 51.7 & 0.84 & 46.7 & 0.83 \\
      GPT-2$_{xl}$ & 53.1 & 0.85 & 47.0 & 0.83 \\ \hline 
-     Random & 7.6 & 0.5 & 7.8 & 0.5 \\\hline
+     Random & 7.6 & 0.50 & 7.8 & 0.50 \\\hline
      
     \end{tabular}
     \caption{Precision at 1 and rank scores on W2D}

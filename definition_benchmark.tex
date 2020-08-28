@@ -333,38 +333,47 @@ the language model has to predict.}
 %   both cases}
 % \enote{ks}{Is it formal enough with the equations?} 
   
-In this study, we focus on masked language models and
+In this study, we focus on masked  and
 autoregressive language models. For a masked language model
 $M$, the probability of a candidate $c \in {\cal G}(t)$ on W2D  is calculated as:
-
 \begin{equation*}
   P\uprm{W2D}{M} (c|t) = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|Q(c,|\bm{t}|))
 \end{equation*}
-where $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^{|\bm{t}|}]$ produced by the tokenizer of $M$. $Q(c,|\bm{t}|)$ is the input query containing the definition of candidate $c$ and $|\bm{t}|$ consecutive mask tokens replacing the underscore in the patterns. For an autoregressive language model $A$, we calculate the probability of generating the target word by multiplying the probabilities of individual tokens given the query $Q(c)$ and previous correct tokens of the target:
-
+where $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^{|\bm{t}|}]$
+is the tokenization produced by  $M$. $Q(c,|\bm{t}|)$ is the
+input query
+created from one of the patterns (Table \ref{tab:patterns})
+with \underline{\hspace{3mm}} replaced with
+$|\bm{t}|$ consecutive mask tokens. For an autoregressive
+language model $A$, we
+decompose $P(\bm{t}^i|Q(c),\bm{t})$ in the standard way:
 \begin{equation*}
     P\uprm{W2D}{A} = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|Q(c),\bm{t}^{1},...,\bm{t}^{i-1})
 \end{equation*}
 
-For D2W, we need to compare the prediction probabilities of
-different candidate words for a given target
-definition. Providing fair comparisons between candidates is
-more difficult in this case due to different tokenization
-lengths of candidate words. To achieve a fair comparison, we
-follow the approach used by \newcite{Xiong20Encyclopedia}. For masked language models, we match the number of mask tokens in an input query to the token count of each candidate. We, then, take the average log-probability of the masked tokens for ranking:
-
+For D2W, we need to compare, given a definition, the probabilities of
+different candidate words that are generally of different lengths.
+To ensure a fair comparison,
+we follow
+\newcite{Xiong20Encyclopedia}. For masked language models, we
+match the number of mask tokens in an input query to the
+token count of each candidate. The final score is the average log-probability of the masked tokens:
 \begin{equation*}
     P\uprm{D2W}{M}(c|t) =
     \frac{1}{|\bm{c}|}\sum_{i=1}^{|\bm{c}|}\log P(\bm{c}^i |
     Q(t,|\bm{c}|))
 \end{equation*}
-For autoregressive models, we use the probability of only the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
-
+For autoregressive models, we use the probability of only
+the first token:
 \begin{equation*}
     P\uprm{D2W}{A}(c|t) =
      P(\bm{c}^1 |
     Q(t))
 \end{equation*}
+Considering further tokens does not make sense since they
+are often easily predictable from the first token.
+
+%for each candidataae since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
 
 We apply our probing test to two different pretrained
 masked language models (BERT and

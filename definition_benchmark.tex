@@ -1,0 +1,279 @@
+%
+% File eacl2021.tex
+%
+%% Based on the style files for ACL 2020, which were
+%% Based on the style files for ACL 2018, NAACL 2018/19, which were
+%% Based on the style files for ACL-2015, with some improvements
+%%  taken from the NAACL-2016 style
+%% Based on the style files for ACL-2014, which were, in turn,
+%% based on ACL-2013, ACL-2012, ACL-2011, ACL-2010, ACL-IJCNLP-2009,
+%% EACL-2009, IJCNLP-2008...
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{eacl2021}
+\usepackage{times}
+\usepackage{latexsym}
+\renewcommand{\UrlFont}{\ttfamily\small}
+
+\usepackage{multirow}
+\usepackage{amsmath}
+
+\usepackage{lipsum}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+%\aclfinalcopy % Uncomment this line for the final submission
+%\def\aclpaperid{***} %  Enter the acl Paper ID here
+
+%\setlength\titlebox{5cm}
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+\newcommand\BibTeX{B\textsc{ib}\TeX}
+
+\title{What does it mean? A Challenging Benchmark for Evaluating Word Understanding of Language Models}
+
+\author{Lütfi Kerem Şenel \\
+  Center for Information and Language Processing (CIS), LMU Munich, Germany \\
+%   \texttt{lksenel@cis.lmu.de} \\\And
+%   Timo Shick \\
+%   Center for Information and Language Processing (CIS), LMU Munich, Germany \\\And
+  Hinrich Schütze \\
+    Center for Information and Language Processing (CIS), LMU Munich, Germany \\
+  \texttt{inquiries@cislmu.org} \\
+  }
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+
+Recent progress in pretraining language models on large corpora provided significant performance gains in many NLP tasks. These large models can acquire linguistic knowledge during unsupervised pretraining, which helps to improve performance on downstream tasks via fine-tuning. To assess what kind of knowledge is acquired, researchers have suggested probing the language models by querying them `fill in the blank' style cloze questions. Existing probing datasets mainly focus on relational knowledge between words and entities. We introduce WDLMPro (Word Definitions Language Model Probing) to evaluate word understanding of language models in a more direct way using definitions of the words. Our evaluations of three popular pre-trained language models on `find the definition' and `find the word' tasks show that these models struggle to match a word and its true definition, indicating a poor word understanding.
+
+\end{abstract}
+
+\section{Introduction}
+
+% Maybe it is better to remove the first paragraph because of space restrictions?
+Natural language processing (NLP) field has advanced drastically in the last decade with the design of larger and more sophisticated models, availability of larger datasets/corpora and increasing computation power. Pre-trained word embeddings \cite{mikolov13word2vec_b, pennington14glove} popularized the use of distributed word representations which became a fundamental building block for NLP systems. Static word embeddings are followed by, generally LSTM based, deep contextual representations of words that are learned on large corpora via unsupervised language modelling objective \cite{peters18ELMO}. It is shown that large performance gains can be obtained by fine-tuning these models on particular tasks after unsupervised pretraining \cite{radford18fineTuning, howard18ULMFiT}. More recently, attention based transformer architecture is shown to use context more effectively \cite{vaswani17transformers} and several subsequent models achieved state of the art results in many NLP tasks by combining transformer architecture with unsupervised pre-training and task specific fine-tuning approach \cite{devlin19BERT, liu19RoBERTa}. \cite{Radford19GPT2} showed that language models can be applied to a variety of tasks without task specific fine tuning which is demonstrated at a much larger scale in \cite{brown20GPT3}. 
+
+Despite the performance improvements on downstream tasks provided by the distributed representations and deep neural models, what they actually learn about language and meaning of the words is not clear due to their uninterpretable nature. For static word embeddings, researchers used word similarity \cite{hill15simlex} and word analogy \cite{gladkova16analogy} tests to shed light on what information is captured in these dense vector spaces. For language models, a great amount of linguistic knowledge is stored in the model parameters \cite{peters18dissecting}. Several studies proposed using `fill in the blank' type cloze statements in order to test the knowledge learned by these models during unsupervised pre-training. \cite{petroni19LMasKB} proposed the LAMA (LAnguage Model Analysis) probe to test the factual and common sense knowledge stored in a language model. A similar approach is used in \cite{Schick20rareWords} where authors introduced WNLaMPro (WordNet Language Model Probing) in order to assess the ability of language models to understand words based on their frequency. In WNLaMPro, cloze style questions are generated based on antonym, hypernym and cohyponym relations among words extracted from WordNet along with word corruptions.
+
+The existing probing datasets mainly focus on investigating the relational knowledge between words or entities. However, a more direct way of testing whether a language model understands the meaning of a word can be using the definitions of the words. If a pre-trained language model truly understands the meaning of a word, then it should be able to distinguish the true word among other words with similar meanings when the definition of the word is provided. Conversely, it should also be able to distinguish the correct definition of a word among definitions of similar words. Based on this motivation, in this study we introduce 
+\textit{Word Definitions Language Model Probing} (WDLMPro) dataset which is a challenging and crucial benchmark for the goal of creating models that can learn meaning of the words accurately. WDLMPro contains thousands of synset groups where each synset group consists of a target synset and neighbor synsets that have some similarity to target along with their definitions. Using WDLMPro, we test two masked language models (BERT and RoBERTa) and one auto-regressive model (GPT-2) to see how well they understand the meaning of the words. Our findings show that these models are not very successful in matching words and their definitions, implying a poor understanding of many words.
+
+\section{WDLMPro}
+We introduce WDLMPro (Word Definitions Language Model Probing) to test how well the language models learn the meanings of nouns and verbs based on their definitions. Definitions are converted to cloze statements and used to query language models for the missing word. We define two types of probing tests in multiple choice format where the candidates are selected in a way to make the test challenging. We present the details for WDLMPro in the following sections.
+
+\subsection{Dataset}
+
+We use WordNet \cite{miller95wordnet} as the source to construct our dataset. The basic structure in WordNet is called \textit{synset} which contains a set of near-synonym words with a short definition of the synset. Different senses of polysemous words are represented in different synsets providing disambiguation. In the WordNet structure, all synsets are connected to other synsets via different semantic relations. 
+
+In this study, we focus on noun and verb lexical categories. We use hypernym and hyponym relations among synsets in order to construct synset groups. A synset group contains a target synset, which represents the group, and neighbour synsets that have the same hypernyms with the target. Specifically, for each noun and verb synset in WordNet, we first take all of its hypernyms, and then, get all unique hyponyms of these hypernyms in order to obtain the neighbours.
+%Maybe a figure to show this process clearer?
+A target synset along with its neighbors make up the candidate set which will be used to create multiple selection questions for the probing. We remove the groups that contain less than 5 candidates from the resulting dataset. Table \ref{tab:dataset_samples} displays five sample candidates and their definitions for the synset groups with target synsets \emph{miscalculation.n.01} and \emph{overhaul.v.02}. Statistics of the resulting dataset is shown in Table \ref{tab:dataset_stats} for nouns and verbs separately.
+% The number of candidates vary greatly across synset groups. 
+
+\begin{table*}
+    \centering
+    \begin{tabular}{l|l}
+    \hline
+    \textbf{synset} & \textbf{definition} \\ \hline
+     \emph{miscalculation.n.01} & \emph{a mistake in calculating} \\
+     blunder.n.01 & an embarrassing mistake \\
+     confusion.n.05 & a mistake that results from taking one thing to be another \\
+     omission.n.01 & a mistake resulting from neglect \\
+     oversight.n.03 & a mistake resulting from inattention \\ \hline
+     \emph{overhaul.v.02} & \emph{make repairs, renovations, revisions or adjustments to} \\
+     refurbish.v.01 & make brighter and prettier \\
+     renovate.v.01 & restore to a previous or better condition \\
+     restore.v.01 & return to its original or usable and functioning condition \\
+     revamp.v.01 & to patch up or renovate \\ \hline
+
+    \end{tabular}
+    \caption{Sample candidates for the synset groups with target \emph{miscalculation.n.01} and \emph{overhaul.v.02} and their corresponding definitions.} 
+    \label{tab:dataset_samples}
+\end{table*}
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|cc}
+    \hline
+         & \textbf{Noun} & \textbf{Verb} \\ \hline
+         \textbf{\# of Synset Groups} & 51559 & 8602 \\
+         \textbf{Average \# of Candidates} & 50.2 & 47.7 \\
+         \textbf{min / max \# of Candidates} & 5 / 404 & 5 / 593 \\ \hline
+    \end{tabular}
+    \caption{Statistics for the evaluation sets}
+    \label{tab:dataset_stats}
+\end{table}
+
+\subsection{Probing Tests}
+
+We create cloze-style questions from the synset groups using the patterns given in Table \ref{tab:patterns} where \texttt{<DEF>} token is replaced with a definition. We define two different tasks that are converse of each other:
+
+\vspace{0.3cm}
+
+\noindent\textbf{Find the Definition:} In this test, we measure the performance of a language model in identifying the correct definition of a word among several related definitions. We feed the definition of each candidate synset in a synset group and calculate the prediction probabilities for the target word.
+
+\vspace{0.3cm}
+
+\noindent\textbf{Find the Word:} In this test, we feed a language model with the definition of only the target synset and calculate the prediction probability for each of the candidate synsets in a synset group.  
+
+\vspace{0.3cm}
+
+In both of the tasks we calculate the probabilities for the string representations of the synsets. For example synset \emph{miscalculation.n.01} is represented by the string ``miscalculation" and synset \emph{warm\_up.v.04} is represented by the string ``warm up". Throughout the paper we refer to these string representations as \textit{candidate} or \textit{target words} (which can be simplex words collocations). We, then, rank the candidates based on their probabilities. For multiple pattern scenarios, we take the best rank achieved by any of the patterns based on the same motivation with \cite{Schick20rareWords} that is we are interested in model's understanding of the word rather than the pattern. 
+
+% Both of these tasks aim to test how well a pretrained language model understands a word without any task specific finetuning. Contrary to the existing probing tests such as LAMA which focuses
+
+\begin{table*}
+\centering
+\begin{tabular}{lll}
+\hline
+& \textbf{Masked Language Model} & \textbf{Auto-regressive Language Model}\\ \hline
+\multirow{3}{*}{\textbf{Noun}} & \underline{\hspace{3mm}} is \texttt{<DEF>} & \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
+ & \underline{\hspace{3mm}} means \texttt{<DEF>} & \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
+ & \underline{\hspace{3mm}} is defined as \texttt{<DEF>} & \texttt{<DEF>} is the definition of an \underline{\hspace{3mm}}\\ \hline
+ \multirow{2}{*}{\textbf{Verb}} & definition of \underline{\hspace{3mm}} is to \texttt{<DEF>} & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
+ & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} & \\ \hline
+ 
+\end{tabular}
+\caption{Patterns used for querying language models for nouns and verbs.}
+\label{tab:patterns}
+\end{table*}
+
+\subsection{Baselines}
+
+We apply our probing test to two different pretrained masked language models (BERT and RoBERTa) and one auto-regressive language model (GPT-2). In order to investigate the effect of model size on the performance, we experiment with both base and large versions of BERT and RoBERTa along with all four sizes of GPT-2 (small, medium, large, xl). For both tasks, we use output token probabilities to rank the candidates. 
+
+For `find the definition' task, we calculate the probability of the same word (i.e., target synset) for all candidate definitions in a synset group. If the target word is tokenized into $N$ tokens by the tokenizer of a masked language model, we provide $N$ consecutive mask tokens in the input and multiply the prediction probabilities for the masked tokens. For GPT-2, we calculate the probability of generating multi-token target word $T_i = [t_i^1,t_i^2,...,t_i^N]$ from the input $query$ by multiplying the probabilities of individual tokens given previous correct tokens:
+
+\begin{equation*}
+    P_{T_i}^{GPT-2} = \prod\limits_{k=1}^N P(t_i^k~|~[query, t_i^{1},...,t_i^{k-1}])
+\end{equation*}
+
+For `find the word' task, we need to compare the prediction probabilities of different candidate words for a given target definition. Providing fair comparisons between candidates is more difficult in this case due to different tokenization lengths of candidates. To achieve a fair comparison, we follow the approach used in \cite{Xiong20Encyclopedia} and match the number of mask tokens in an input $query$ to the token count of each candidate for masked language models. Then we take the average probability of the masked tokens for ranking. For GPT-2, we only use the probability of the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts.
+
+For RoBERTa, we capitalize the first letter of the candidate noun words since pretrained RoBERTa models are case sensitive and expect a capital letter at the beginning of a sentence\footnote{We also experimented without capitalization which resulted in poor performance for single token target words for `find the word' task}. 
+
+\subsection{Metrics}
+
+The first metric we use to measure the performance of pretrained language models on WDLMPro is accuracy. For the accuracy calculation, we simply calculate the percentage of examples where the target has the highest probability among all the candidates, hence is at the top rank. However, as shown in Table \ref{tab:dataset_stats}, number of samples vary greatly across examples (i.e., synset groups) making the resulting accuracy values harder to interpret. To provide some intuition, we provide the baseline theoretic accuracies for random ranking of the candidates. Another disadvantage of accuracy metric is that it does not consider the rank of the target among the candidates as long as it is not at the top rank. In other words, putting the target at the second rank is regarded as bad as putting it at the last rank.
+
+To address the limitations of the accuracy metric, we introduce a \textit{rank score} metric. For an example with $M$ candidates, rank score is calculated as:
+
+\begin{equation*}
+    RS^M_k = \frac{M-k}{M-1}
+\end{equation*}
+
+\noindent where $k$ is the predicted rank for the target ($k \in \{1,...,M\}$). Rank score metric provides a uniform weighting between 0 and 1 for the possible rankings of the target amongthe candidates. Contrary to the accuracy metric, rank score is not affected by the number of candidates and the random baseline is always 0.5.  
+
+\section{Results}
+
+Table \ref{tab:results_find_the_definition} and Table \ref{tab:results_find_the_word} present the results for the BERT, RoBERTa and GPT-2 models on find the definition and find the word tasks, respectively along with a random baseline. Larger models perform generally better smaller ones in both tasks as expected. For find the definition task best performance is achieved by GPT-2$^{xl}$ model for the nouns (53.1\% accuracy, 0.85 rank score) while RoBERTa large performs the best for the verbs (54.4\% accuracy, 0.88 rank score). Performances on the find the word task are significantly lower than find the definition task for all models. Similar to the first task, GPT-2$^{xl}$ achieves the best results for the nouns (39.9\% accuracy, 0.81 rank score) while RoBERTa large performs the best for the verbs (43.7\% accuracy, 0.82 rank score).
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|cccc}
+        \hline
+         \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
+         & Acc. & Rank S. & Acc. & Rank S. \\ \hline
+     Bert$_{b}$ & 43.7 & 0.82 & 40.7 & 0.82 \\
+     Bert$_{l}$ & 44.3 & 0.83 & 39.0 & 0.81 \\
+     Roberta$_{b}$ & 45.5 & 0.83 & 49.1 & 0.85 \\
+     Roberta$_{l}$ & 50.0 & 0.85 & 54.4 & 0.88 \\ \hline
+     GPT-2$_{s}$ & 44.7 & 0.81 & 43.0 & 0.80 \\
+     GPT-2$_{m}$ & 47.6 & 0.82 & 42.3 & 0.80 \\
+     GPT-2$_{l}$ & 51.7 & 0.84 & 46.7 & 0.83 \\
+     GPT-2$_{xl}$ & 53.1 & 0.85 & 47.0 & 0.83 \\ \hline 
+     Random & 7.6 & 0.5 & 7.8 & 0.5 \\\hline
+     
+    \end{tabular}
+    \caption{Accuracies and rank scores on the find the definition task.}
+    \label{tab:results_find_the_definition}
+\end{table}
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|cccc}
+        \hline
+         \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
+         & Acc. & Rank S. & Acc. & Rank S. \\ \hline
+     Bert$_{b}$ & 26.9 & 0.72 & 23.9 & 0.73 \\
+     Bert$_{l}$ & 30.2 & 0.74 & 28.9 & 0.75 \\
+     Roberta$_{b}$ & 29.4 & 0.72 & 34.4 & 0.77 \\
+     Roberta$_{l}$ & 31.5 & 0.74 & 43.7 & 0.82 \\ \hline
+     GPT-2$_{s}$ & 34.2 & 0.78 & 27.7 & 0.69 \\
+     GPT-2$_{m}$ & 36.2 & 0.79 & 24.8 & 0.69 \\
+     GPT-2$_{l}$ & 39.0 & 0.80 & 29.0 & 0.72 \\
+     GPT-2$_{xl}$ & 39.9 & 0.81 & 30.3 & 0.73 \\ \hline 
+     Random & 7.6 & 0.5 & 8.0 & 0.5 \\\hline
+     
+    \end{tabular}
+    \caption{Accuracies and rank scores on the find the word task.}
+    \label{tab:results_find_the_word}
+\end{table}
+
+
+We also investigate the affect of the frequency of the target words on the model performance. For this part, we focus only on the nouns since most the verbs in our dataset are relatively frequent. Because these models are trained on different corpora, frequency of a target word (or number of times a model sees a target word during training) can be different across the models. Nonetheless, we group the target words based on the number of times they occur in the Westbury Wikipedia Corpus (WWC) \cite{WWC} as an approximation (since relative frequencies of nouns do not change drastically among different large corpora?). We define three subsets based on the occurrence counts of the target words in WWC: \textit{rare} group contains words that occur less than 10 times, \textit{medium} group contains words that occur 10 to 99 times and \textit{frequent} group contains the remaining words\footnote{Both the corpus and target words are tokenized using NLTK tokenizer.  Targets that contain more than 3 tokens are taken as rare without counting.}. Table \ref{tab:freq_results_find_the_definition} and Table \ref{tab:freq_results_find_the_word} present the the results based on target word frequency for find the definition and find the word tasks, respectively. These results show that all models have poor understanding of the meaning of the rare and medium frequency words. Moreover, even for the frequent words accuracies are below 60\% for all models demonstrating that even the large and sophisticated language models fail to learn nuances in the meaning of many different nouns. 
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|cccc}
+    \hline
+         \textbf{Model} & \textbf{rare} & \textbf{medium} & \textbf{frequent} & \textbf{all} \\ \hline
+     Bert$_{b}$ & 33.7 & 39.2 & 49.7 & 43.7 \\
+     Bert$_{l}$ & 32.8 & 38.7 & 51.3 & 44.3 \\
+     Roberta$_{b}$ & 38.0 & 42.2 & 49.9 & 45.5 \\
+     Roberta$_{l}$ & 40.6 & 45.2 & 55.9 & 50.0 \\ \hline
+     GPT-2$_{s}$ & 37.2 & 41.1 & 49.3 & 44.7 \\
+     GPT-2$_{m}$ & 38.5 & 43.0 & 53.3 & 47.6 \\
+     GPT-2$_{l}$ & 41.8 & 47.3 & 57.7 & 51.7 \\
+     GPT-2$_{xl}$ & 42.2 & 48.4 & 59.5 & 53.1 \\ \hline
+     Random & 6.6 & 7.0 & 8.2 & 7.6 \\ \hline 
+     
+    \end{tabular}
+    \caption{Accuracies for the nouns on find the definition task based on target word frequency.}
+    \label{tab:freq_results_find_the_definition}
+\end{table}
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|cccc}
+    \hline
+        \textbf{Model} & \textbf{rare} & \textbf{medium} & \textbf{frequent} & \textbf{all}\\ \hline
+     Bert$_{b}$ & 22.5 & 26.5 & 28.9 & 26.9 \\
+     Bert$_{l}$ & 21.6 & 27.0 & 35.1 & 30.2 \\
+     Roberta$_{b}$ & 22.9 & 28.8 & 32.2 & 29.4 \\
+     Roberta$_{l}$ & 22.5 & 29.6 & 36.0 & 31.5 \\ \hline
+     GPT-2$_{s}$ & 26.5 & 30.4 & 39.0 & 34.2 \\
+     GPT-2$_{m}$ & 26.0 & 30.5 & 42.8 & 36.2 \\
+     GPT-2$_{l}$ & 28.2 & 33.2 & 45.9 & 39.0 \\
+     GPT-2$_{xl}$ & 27.3 & 33.0 & 47.9 & 39.9 \\ \hline
+     Random & 6.7 & 7.1 & 8.3 & 7.6 \\ \hline 
+     
+    \end{tabular}
+    \caption{Accuracies for the nouns on find the word task based on target word frequency.}
+    \label{tab:freq_results_find_the_word}
+\end{table}
+
+
+\section{Conclusion}
+
+Probing tests help researches to understand what information is stored in the parameters of a model and how well a model understands a given word or concept. Currently available probing tests focus on investigating the relational knowledge between words or entities. In this study, we introduced WDLMPro (Word Definitions Language Model Probing) dataset for evaluating word understanding of language models in a more direct way based on word definitions. We evaluated three popular pre-trained language models on `find the definition' and `find the word' tasks that we define on WDLMPro. Our findings show that, despite their remarkable performance on many downstream tasks, these models struggle to match a word and its true definition, suggesting an insufficient word understanding. WDLMPro provides an important evaluation benchmark, encouraging design and training of models with precise word understanding.
+
+\bibliography{definition_benchmark}
+\bibliographystyle{acl_natbib}
+
+\end{document}

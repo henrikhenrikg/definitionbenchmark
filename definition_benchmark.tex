@@ -53,36 +53,172 @@
 
 \date{}
 
+\newcounter{notecounter}
+\newcommand{\enotesoff}{\long\gdef\enote##1##2{}}
+\newcommand{\enoteson}{\long\gdef\enote##1##2{{
+\stepcounter{notecounter}
+{\large\bf
+\hspace{1cm}\arabic{notecounter} $<<<$ ##1: ##2
+$>>>$\hspace{1cm}}}}}
+\enoteson
+%\enotesoff
+
+
 \begin{document}
 \maketitle
 \begin{abstract}
 
-Recent progress in pretraining language models on large corpora provided significant performance gains in many NLP tasks. These large models can acquire linguistic knowledge during unsupervised pretraining, which helps to improve performance on downstream tasks via fine-tuning. To assess what kind of knowledge is acquired, researchers have suggested probing the language models by querying them `fill in the blank' style cloze questions. Existing probing datasets mainly focus on relational knowledge between words and entities. We introduce WDLMPro (Word Definitions Language Model Probing) to evaluate word understanding of language models in a more direct way using definitions of the words. Our evaluations of three popular pre-trained language models on `find the definition' and `find the word' tasks show that these models struggle to match a word and its true definition, indicating a poor word understanding.
+Recent progress in pretraining language models on large
+corpora provided significant performance gains in many NLP
+tasks. These large models can acquire linguistic knowledge
+during unsupervised pretraining, which helps to improve
+performance on downstream tasks via fine-tuning. To assess
+what kind of knowledge is acquired, researchers have
+suggested probing the language models by querying them with
+`fill in the blank' style cloze questions. Existing probing
+datasets mainly focus on knowledge about relations between words and entities. We introduce WDLMPro (Word Definitions Language Model Probing) to evaluate word understanding of language models in a more direct way using definitions of the words. Our evaluations of three popular pre-trained language models on `find the definition' and `find the word' tasks show that these models struggle to match a word and its true definition, indicating a poor word understanding.
 
 \end{abstract}
+
+
 
 \section{Introduction}
 
 % Maybe it is better to remove the first paragraph because of space restrictions?
-Natural language processing (NLP) field has advanced drastically in the last decade with the design of larger and more sophisticated models, availability of larger datasets/corpora and increasing computation power. Pre-trained word embeddings \cite{mikolov13word2vec_b, pennington14glove} popularized the use of distributed word representations which became a fundamental building block for NLP systems. Static word embeddings are followed by, generally LSTM based, deep contextual representations of words that are learned on large corpora via unsupervised language modelling objective \cite{peters18ELMO}. It is shown that large performance gains can be obtained by fine-tuning these models on particular tasks after unsupervised pretraining \cite{radford18fineTuning, howard18ULMFiT}. More recently, attention based transformer architecture is shown to use context more effectively \cite{vaswani17transformers} and several subsequent models achieved state of the art results in many NLP tasks by combining transformer architecture with unsupervised pre-training and task specific fine-tuning approach \cite{devlin19BERT, liu19RoBERTa}. \cite{Radford19GPT2} showed that language models can be applied to a variety of tasks without task specific fine tuning which is demonstrated at a much larger scale in \cite{brown20GPT3}. 
+Natural language processing (NLP)  has advanced drastically
+in the last decade with the design of larger and more
+sophisticated models, availability of larger
+datasets/corpora and increasing computation
+power. Pre-trained word embeddings
+\cite{mikolov13word2vec_b, pennington14glove} popularized
+the use of distributed word representations which became a
+fundamental building block for NLP systems. Static word
+embeddings are followed by, generally LSTM based, deep
+contextual representations of words that are learned on
+large corpora via unsupervised language modelling objective
+\cite{peters18ELMO}. Large performance gains can be obtained
+by fine-tuning these models on particular tasks after
+unsupervised pretraining \cite{radford18fineTuning,
+  howard18ULMFiT}. More recently, attention based
+transformer architecture is shown to use context more
+effectively \cite{vaswani17transformers} and several
+subsequent models achieved state of the art results in many
+NLP tasks by combining transformer architecture with
+unsupervised pre-training and task specific fine-tuning
+\cite{devlin19BERT, liu19RoBERTa}. \newcite{Radford19GPT2}
+showed that language models can be applied to a variety of
+tasks without task specific fine tuning. This is demonstrated on a much larger scale by \newcite{brown20GPT3}. 
 
-Despite the performance improvements on downstream tasks provided by the distributed representations and deep neural models, what they actually learn about language and meaning of the words is not clear due to their uninterpretable nature. For static word embeddings, researchers used word similarity \cite{hill15simlex} and word analogy \cite{gladkova16analogy} tests to shed light on what information is captured in these dense vector spaces. For language models, a great amount of linguistic knowledge is stored in the model parameters \cite{peters18dissecting}. Several studies proposed using `fill in the blank' type cloze statements in order to test the knowledge learned by these models during unsupervised pre-training. \cite{petroni19LMasKB} proposed the LAMA (LAnguage Model Analysis) probe to test the factual and common sense knowledge stored in a language model. A similar approach is used in \cite{Schick20rareWords} where authors introduced WNLaMPro (WordNet Language Model Probing) in order to assess the ability of language models to understand words based on their frequency. In WNLaMPro, cloze style questions are generated based on antonym, hypernym and cohyponym relations among words extracted from WordNet along with word corruptions.
+\enote{hs}{intro up to here: can probably be cut (a little
+  bit too detailed about stuff everybody knows)}
 
-The existing probing datasets mainly focus on investigating the relational knowledge between words or entities. However, a more direct way of testing whether a language model understands the meaning of a word can be using the definitions of the words. If a pre-trained language model truly understands the meaning of a word, then it should be able to distinguish the true word among other words with similar meanings when the definition of the word is provided. Conversely, it should also be able to distinguish the correct definition of a word among definitions of similar words. Based on this motivation, in this study we introduce 
-\textit{Word Definitions Language Model Probing} (WDLMPro) dataset which is a challenging and crucial benchmark for the goal of creating models that can learn meaning of the words accurately. WDLMPro contains thousands of synset groups where each synset group consists of a target synset and neighbor synsets that have some similarity to target along with their definitions. Using WDLMPro, we test two masked language models (BERT and RoBERTa) and one auto-regressive model (GPT-2) to see how well they understand the meaning of the words. Our findings show that these models are not very successful in matching words and their definitions, implying a poor understanding of many words.
+Despite the performance improvements on downstream tasks
+provided by the distributed representations and deep neural
+models, what they actually learn about language and word meaning  is not clear due to their uninterpretable nature. For static word embeddings, researchers used word similarity \cite{hill15simlex} and word analogy \cite{gladkova16analogy} tests to shed light on what information is captured in these dense vector spaces. For language models, a great amount of linguistic knowledge is stored in the model parameters \cite{peters18dissecting}. Several studies proposed using `fill in the blank' type cloze statements to test the knowledge learned by these models during unsupervised pre-training. \newcite{petroni19LMasKB} proposed the LAMA (LAnguage Model Analysis) probe to test the factual and common sense knowledge stored in a language model. A similar approach is used in \cite{Schick20rareWords} where authors introduced WNLaMPro (WordNet Language Model Probing) in order to assess the ability of language models to understand words based on their frequency. In WNLaMPro, cloze style questions are generated based on antonym, hypernym and cohyponym relations among words extracted from WordNet along with word corruptions.
+
+The existing probing datasets mainly focus on investigating
+the knowledge about relations between words or
+entities. However, a more direct way of testing whether a
+language model understands the meaning of a word is to
+use its dictionary definition. If a pre-trained
+language model truly understands the meaning of a word, then
+it should be able to
+match a word with its dictionary definition. 
+Based on this motivation, in
+this study we introduce the \textit{Word Definitions Language
+  Model Probing} (WDLMPro) dataset; it is a challenging
+benchmark for testing NLP models for their ability to
+understand words.
+WDLMPro is essentially a set of
+thousands of synset groups; each synset group consists
+of a target word (with definition) and neighbor synsets
+(each with its definition)
+that
+\enote{hs}{better talk about sisters in taxonomy?}
+have some
+similarity to the target.
+We test two masked language models, BERT and
+RoBERTa, and the auto-regressive model GPT-2 on WDLMPro.
+We find
+that all three models have great difficulty matching
+words and their definitions, implying a poor understanding
+of word meaning.
+
+\enote{hs}{we could be more specific about the two different
+  tasks here if there is space:
+  
+Conversely, it should also be able to
+distinguish the correct definition of a word among
+definitions of similar words. 
+
+}
 
 \section{WDLMPro}
-We introduce WDLMPro (Word Definitions Language Model Probing) to test how well the language models learn the meanings of nouns and verbs based on their definitions. Definitions are converted to cloze statements and used to query language models for the missing word. We define two types of probing tests in multiple choice format where the candidates are selected in a way to make the test challenging. We present the details for WDLMPro in the following sections.
+We introduce  WDLMPro (Word Definitions Language Model
+Probing) to test how well NLP models can match
+nouns and verbs with  their
+definitions.
+We view this as a test of how well the models understand lexical meaning.
+%We convert definitions  to cloze statements by substituting
+%the word in question with a mask.
+%We
+%define two types of probing tests in multiple choice format
+%where the candidates are selected in a way to make the test
+%challenging.
+In this section, we
+present a detailed description of WDLMPro.
 
 \subsection{Dataset}
+WordNet \cite{miller95wordnet} is the basis for
+constructing WDLMPro.  A WordNet \textit{synset} contains a
+set of near-synonym words along with a short definition of
+the synset.  Different senses of polysemous words are
+represented in different synsets providing
+disambiguation. WordNet connects synsets with each other via
+different semantic relations.
 
-We use WordNet \cite{miller95wordnet} as the source to construct our dataset. The basic structure in WordNet is called \textit{synset} which contains a set of near-synonym words with a short definition of the synset. Different senses of polysemous words are represented in different synsets providing disambiguation. In the WordNet structure, all synsets are connected to other synsets via different semantic relations. 
+Based on a \emph{target synset} and the semantic relations, we construct
+a \emph{synset group} for the target as follows.
 
-In this study, we focus on noun and verb lexical categories. We use hypernym and hyponym relations among synsets in order to construct synset groups. A synset group contains a target synset, which represents the group, and neighbour synsets that have the same hypernyms with the target. Specifically, for each noun and verb synset in WordNet, we first take all of its hypernyms, and then, get all unique hyponyms of these hypernyms in order to obtain the neighbours.
+
+
+ We use hypernym
+and hyponym relations among synsets in order to construct
+synset groups. A synset group contains a target synset,
+which represents the group, and neighbor synsets that have
+the same hypernyms with the target. Specifically, for each
+noun and verb synset in WordNet, we first take all of its
+hypernyms, and then, get all unique hyponyms of these
+hypernyms in order to obtain the neighbors.  A target synset
+along with its neighbors make up the candidate set which
+will be used to create multiple selection questions for the
+probing. We remove the groups that contain less than 5
+candidates from the resulting dataset.
+
+
+In this study, we focus on nouns and verbs.
+Table
+\ref{tab:dataset_samples} displays five sample candidates
+and their definitions for the synset groups with target
+synsets \emph{miscalculation.n.01} and
+\emph{overhaul.v.02}. Statistics of the resulting dataset is
+shown in Table \ref{tab:dataset_stats} for nouns and verbs
+separately.
+
+
+
+\enote{hs}{yes a figure would be nice
+
 %Maybe a figure to show this process clearer?
-A target synset along with its neighbors make up the candidate set which will be used to create multiple selection questions for the probing. We remove the groups that contain less than 5 candidates from the resulting dataset. Table \ref{tab:dataset_samples} displays five sample candidates and their definitions for the synset groups with target synsets \emph{miscalculation.n.01} and \emph{overhaul.v.02}. Statistics of the resulting dataset is shown in Table \ref{tab:dataset_stats} for nouns and verbs separately.
-% The number of candidates vary greatly across synset groups. 
 
+}
+
+\enote{ks}{
+
+The number of candidates vary greatly across synset groups. 
+
+}
+  
 \begin{table*}
     \centering
     \begin{tabular}{l|l}
@@ -103,6 +239,10 @@ A target synset along with its neighbors make up the candidate set which will be
     \caption{Sample candidates for the synset groups with target \emph{miscalculation.n.01} and \emph{overhaul.v.02} and their corresponding definitions.} 
     \label{tab:dataset_samples}
 \end{table*}
+
+\enote{hs}{i would prefer examples in table dataset\_samples
+  that are a little bit more convincing and show the
+  strengths of the dataset}
 
 \begin{table}
     \centering

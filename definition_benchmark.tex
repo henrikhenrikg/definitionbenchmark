@@ -71,15 +71,22 @@ $>>>$\hspace{1cm}}}}}
 \begin{abstract}
 
 Recent progress in pretraining language models on large
-corpora provided significant performance gains in many NLP
-tasks. These large models can acquire linguistic knowledge
-during unsupervised pretraining, which helps to improve
+corpora has resulted in significant performance gains on many NLP
+tasks. These large models acquire linguistic knowledge
+during pretraining, which helps to improve
 performance on downstream tasks via fine-tuning. To assess
-what kind of knowledge is acquired, researchers have
-suggested probing the language models by querying them with
+what kind of knowledge is acquired,
+language models are commonly probed by querying them with
 `fill in the blank' style cloze questions. Existing probing
-datasets mainly focus on knowledge about relations between words and entities. We introduce WDLMPro (Word Definitions Language Model Probing) to evaluate word understanding of language models in a more direct way using definitions of the words. Our evaluations of three popular pretrained language models on two probing tests show that these models struggle to match words and their true definitions, indicating a poor word understanding.
-
+datasets mainly focus on knowledge about \emph{relations between}
+words and entities. We introduce WDLMPro (Word Definitions
+Language Model Probing) to \emph{evaluate word understanding directly} using definitions of
+the words. In our experiments, three popular pretrained
+language models
+struggle to match words and their  definitions. This
+indicates that they understand words poorly and that
+our new probing task is a difficult challenge that could
+help guide research on LMs in the future.
 \end{abstract}
 
 
@@ -90,12 +97,12 @@ datasets mainly focus on knowledge about relations between words and entities. W
 Natural language processing (NLP)  has advanced drastically
 in the last decade with the design of larger and more
 sophisticated models, availability of larger
-datasets/corpora and increasing computation
-power. pretrained word embeddings
+corpora and increasing computational
+power. Pretrained word embeddings
 \cite{mikolov13word2vec_b, pennington14glove} popularized
-the use of distributed word representations which became a
+the use of distributed word representations, which became a
 fundamental building block for NLP systems. Static word
-embeddings are followed by, generally LSTM based, deep
+embeddings were followed by, generally LSTM based, deep
 contextual representations of words that are learned on
 large corpora via unsupervised language modelling objective
 \cite{peters18ELMO}. Large performance gains are obtained
@@ -163,7 +170,7 @@ present a detailed description of WDLMPro.
 \subsection{Dataset}
 WordNet \cite{miller95wordnet} is the basis for
 constructing WDLMPro.  A WordNet \textit{synset} contains a
-set of near-synonym words along with a short definition of
+set of synonyms along with a short definition of
 the synset.  Different senses of polysemous words are
 represented in different synsets providing
 disambiguation. WordNet connects synsets with each other via
@@ -188,7 +195,7 @@ have a size of less than 5.
 In this study, we focus on nouns and verbs, i.e., we create
 synset groups ${\cal G}$ for the nouns and verbs in WordNet.
 Table
-\ref{tab:dataset_samples} displays five members form ${\cal
+\ref{tab:dataset_samples} displays five members from ${\cal
   G} (t)$ 
 and their definitions
 for the targets
@@ -241,11 +248,6 @@ I skipped the figure for now.
     \label{tab:dataset_samples}
 \end{table*}
 
-\enote{hs}{i would prefer examples in table dataset\_samples
-  that are a little bit more convincing and show the
-  strengths of the dataset}
-  
-\enote{ks}{I replaced \emph{miscalculation.n.01} and \emph{overhaul.v.02} with \emph{a\_cappella\_singing.n.01} and \emph{beckon.v.01}. Is it better or should we look for better examples?}
 
 \begin{table}
     \centering
@@ -280,11 +282,13 @@ Similarly, each synset group ${\cal G}(t)$ gives rise to one instance
 of W2D by providing $t$ and the definitions of all words in
 ${\cal G}(t)$. The
 correct definition  of $t$ has then to be identified among
-all definition  candidates.
+all definition  candidates. Note that WordNet definitions by
+construction do not contain the word to be defined. So there
+are no instances where the two tasks are trivial.
 
 \subsubsection{Application to language models}
-In principle, any NLP model can be tested on the D2W and W2D
-tasks we just described. In this paper, we are particularly
+In principle, any NLP model can be tested on D2W and W2D.
+In this paper, we are particularly
 interested in testing language models. To this end, we 
 convert the data to a format that is suitable for language
 models, i.e., to cloze-style questions.  As shown in Table
@@ -294,17 +298,23 @@ and autoregressive language models. We define alternatives
 ``definition of a \underline{\hspace{3mm}}'', 
 ``definition of an \underline{\hspace{3mm}}'') and will then
 use, for each word, the alternative that gives the best
-result. This allows us to generate  WDLMPro automatically as opposed to having to manually postedit a very large dataset.
-This is justified because we are interested in the model's understanding of the word rather than the pattern (cf.\  \newcite{Schick20rareWords}). 
+result. This allows us to generate  WDLMPro automatically as opposed to having to manually postedit alarge dataset.
+This is justified because we are interested in
+how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
 
 \enote{hs}{the following should be more formal -- we can
   probably use Timo's notation}
 
-In both of the tasks we calculate the probabilities for the
-string representations of the synsets (i.e., $t \rightarrow \bm{t}$). We obtain the string representations by removing the word type and sense information from the name of the synset and replacing underscores with white space. For example, synset \emph{miscalculation.n.01} is represented by the string
-``miscalculation'' and synset \emph{warm\_up.v.04} is
-represented by the string ``warm up''. 
-We, then, rank the candidates in ${\cal G}(t)$ based on their probabilities.
+For both tasks, we calculate the probability for the
+string representation of the synset (i.e., $t \rightarrow
+\bm{t}$). We obtain the string representation by removing
+the word type and sense information from the name of the
+synset and replacing underscores with white space. For
+example, synset \emph{miscalculation.n.01} is represented by
+the string ``miscalculation'' and synset
+\emph{warm\_up.v.04} is represented by the string ``warm
+up''.  We then rank the candidates in ${\cal G}(t)$ based
+on their probabilities.
 
 \begin{table*}
 \centering

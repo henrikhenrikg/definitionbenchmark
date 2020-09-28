@@ -85,7 +85,7 @@ Language Model Probing) to \emph{evaluate word understanding directly} using def
 the words. In our experiments, three popular pretrained
 language models
 struggle to match words and their  definitions. This
-indicates that they understand words poorly and that
+indicates that they understand many words poorly and that
 our new probing task is a difficult challenge that could
 help guide research on LMs in the future.
 \end{abstract}
@@ -168,7 +168,7 @@ set of synonyms along with a short definition of
 the synset.  Different senses of polysemous words are
 represented in different synsets providing
 disambiguation. WordNet connects synsets with each other via
-different semantic relations.
+semantic relations.
 
 Based on a \emph{target synset}
 $t$ and the semantic relation hyponymy $<$, we construct
@@ -222,7 +222,7 @@ Table \ref{tab:dataset_stats} shows statistics of the dataset.
      exsert.v.01 & thrust or extend out \\ \hline
    
     \end{tabular}
-    \caption{Sample candidates for the synset groups with target \emph{a\_cappella\_singing.n.01} and \emph{beckon.v.01} and their corresponding definitions.} 
+    \caption{Sample candidates for the synset groups with targets \emph{a\_cappella\_singing.n.01} and \emph{beckon.v.01} and their corresponding definitions.} 
     \label{tab:dataset_samples}
 \end{table*}
 
@@ -236,7 +236,7 @@ Table \ref{tab:dataset_stats} shows statistics of the dataset.
          \textbf{Average \# of Candidates} & 50.2 & 47.7 \\
          \textbf{min / max \# of Candidates} & 5 / 404 & 5 / 593 \\ \hline
     \end{tabular}
-    \caption{Statistics for the evaluation sets}
+    \caption{WDLMPro statistics}
     \label{tab:dataset_stats}
 \end{table}
 
@@ -275,7 +275,8 @@ shown in Table
 assess the compatibility of a word $t$ and a definition is the
 probability of
 $t$ being generated for 
-the underscore when the definition is substituted for $<$DEF$>$.
+``\underline{\hspace{3mm}}'' when the definition is substituted for $<$DEF$>$.
+
 More precisely, we compute the probability that the string
 representation of $t$ is being generated.
 We will denote the string representation of synset $t$ by
@@ -283,10 +284,11 @@ $\bm{t}$.
 We obtain the string representation by removing
 the word type and sense information from the name of the
 synset and replacing underscores with white space. For
-example, synset \emph{miscalculation.n.01} is represented by
-the string ``miscalculation'' and synset
-\emph{warm\_up.v.04} is represented by the string ``warm
-up''.
+example, synset \emph{miscalculation.n.01}
+(\emph{warm\_up.v.04})
+is represented by
+the string ``miscalculation'' (``warm
+up'').
 
 Table
 \ref{tab:patterns}
@@ -336,12 +338,12 @@ autoregressive language models. For a masked language model
 $M$, the probability of a candidate $c \in {\cal G}(t)$ on W2D  is calculated as:
 
 \begin{equation*}
-  P\uprm{W2D}{M} (c|t) = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|D(c,|\bm{t}|))
+  P\uprm{W2D}{M} (c|t) = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|Q(c,|\bm{t}|))
 \end{equation*}
-where $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^{|\bm{t}|}]$ produced by the tokenizer of $M$. $D(c,|\bm{t}|)$ is the input query containing the definition of candidate $c$ and $|\bm{t}|$ consecutive mask tokens replacing the underscore in the patterns. For an autoregressive language model $A$, we calculate the probability of generating the target word by multiplying the probabilities of individual tokens given the query $D(c)$ and previous correct tokens of the target:
+where $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^{|\bm{t}|}]$ produced by the tokenizer of $M$. $Q(c,|\bm{t}|)$ is the input query containing the definition of candidate $c$ and $|\bm{t}|$ consecutive mask tokens replacing the underscore in the patterns. For an autoregressive language model $A$, we calculate the probability of generating the target word by multiplying the probabilities of individual tokens given the query $Q(c)$ and previous correct tokens of the target:
 
 \begin{equation*}
-    P\uprm{W2D}{A} = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|D(c),\bm{t}^{1},...,\bm{t}^{i-1})
+    P\uprm{W2D}{A} = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|Q(c),\bm{t}^{1},...,\bm{t}^{i-1})
 \end{equation*}
 
 For D2W, we need to compare the prediction probabilities of
@@ -354,14 +356,14 @@ follow the approach used by \newcite{Xiong20Encyclopedia}. For masked language m
 \begin{equation*}
     P\uprm{D2W}{M}(c|t) =
     \frac{1}{|\bm{c}|}\sum_{i=1}^{|\bm{c}|}\log P(\bm{c}^i |
-    D(t,|\bm{c}|))
+    Q(t,|\bm{c}|))
 \end{equation*}
 For autoregressive models, we use the probability of only the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
 
 \begin{equation*}
     P\uprm{D2W}{A}(c|t) =
      P(\bm{c}^1 |
-    D(t))
+    Q(t))
 \end{equation*}
 
 We apply our probing test to two different pretrained

@@ -290,19 +290,11 @@ is represented by
 the string ``miscalculation'' (``warm
 up'').
 
-Table
-\ref{tab:patterns}
-shows
-that we define different templates for masked
-and autoregressive language models. We define alternatives
-(e.g., ``definition of \underline{\hspace{3mm}}'', 
-``definition of a \underline{\hspace{3mm}}'', 
-``definition of an \underline{\hspace{3mm}}'') and will then
-use, for each word, the alternative that gives the best
-result. This allows us to generate  WDLMPro automatically as
-opposed to having to manually postedit a large dataset.
-This is justified because we are interested in
-how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
+Table \ref{tab:patterns} shows that we define different templates for masked and autoregressive language models.
+For the cases with multiple patterns, we average the prediction scores accross patterns and 
+% We define alternatives (e.g., ``definition of \underline{\hspace{3mm}}'', ``definition of a \underline{\hspace{3mm}}'', ``definition of an \underline{\hspace{3mm}}'') and will then use, for each word, the alternative that gives the best result. 
+% This allows us to generate  WDLMPro automatically as opposed to having to manually postedit a large dataset.
+% This is justified because we are interested in how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
 
 % \enote{hs}{the following should be more formal -- we can
 %   probably use Timo's notation}
@@ -313,8 +305,8 @@ how well the model understands the word, not the pattern (cf.\  \newcite{Schick2
 \hline
 & \textbf{Masked Language Model} & \textbf{Autoregressive Language Model}\\ \hline
 \multirow{3}{*}{\textbf{Noun}} & \underline{\hspace{3mm}} is \texttt{<DEF>} & \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
- & \underline{\hspace{3mm}} means \texttt{<DEF>} & \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
- & \underline{\hspace{3mm}} is defined as \texttt{<DEF>} & \texttt{<DEF>} is the definition of an \underline{\hspace{3mm}}\\ \hline
+ & \underline{\hspace{3mm}} means \texttt{<DEF>} & \\% \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
+ & \underline{\hspace{3mm}} is defined as \texttt{<DEF>} & \\ \hline %\texttt{<DEF>} is the definition of an \underline{\hspace{3mm}}\\ \hline
  \multirow{2}{*}{\textbf{Verb}} & definition of \underline{\hspace{3mm}} is to \texttt{<DEF>} & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
  & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} & \\ \hline
  

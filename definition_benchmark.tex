@@ -65,7 +65,7 @@ $>>>$\hspace{1cm}}}}}
 \enoteson
 %\enotesoff
 
-\def\uprm#1#2{_#2\mbox{$^{\hbox{\scriptsize #1}}$}}
+\def\uprm#1#2{\mbox{$_#2^{\hbox{\scriptsize #1}}$}}
 
 \begin{document}
 \maketitle
@@ -119,8 +119,7 @@ unsupervised pretraining and task specific fine-tuning
 showed that language models can be applied to a variety of
 tasks without task specific fine tuning. This is demonstrated on a much larger scale by \newcite{brown20GPT3}. 
 
-\enote{hs}{intro up to here: can probably be cut (a little
-  bit too detailed about stuff everybody knows)}
+% \enote{hs}{intro up to here: can probably be cut (a little bit too detailed about stuff everybody knows)}
 
 Despite the performance improvements on downstream tasks
 provided by the distributed representations and deep neural
@@ -149,9 +148,9 @@ We find that all three models have great difficulty matching
 words and their definitions, implying a poor understanding
 of word meaning.
 
-\enote{hs}{we could be more specific about the two different
-  tasks here if there is space:
-}
+% \enote{hs}{we could be more specific about the two different
+%   tasks here if there is space:
+% }
 
 \section{WDLMPro}
 We introduce  WDLMPro (Word Definitions Language Model
@@ -159,12 +158,6 @@ Probing) to test how well NLP models can match
 nouns and verbs with  their
 definitions.
 We view this as a test of how well the models understand lexical meaning.
-%We convert definitions  to cloze statements by substituting
-%the word in question with a mask.
-%We
-%define two types of probing tests in multiple choice format
-%where the candidates are selected in a way to make the test
-%challenging.
 In this section, we
 present a detailed description of WDLMPro.
 
@@ -204,19 +197,13 @@ for the targets
 \emph{beckon.v.01}. 
 Table \ref{tab:dataset_stats} shows statistics of the dataset.
 
+% \enote{hs}{yes a figure would be nice
+% %Maybe a figure to show this process clearer?
+% }
 
-
-\enote{hs}{yes a figure would be nice
-
-%Maybe a figure to show this process clearer?
-
-}
-
-\enote{ks}{
-
-I skipped the figure for now. 
-
-}
+% \enote{ks}{
+% I skipped the figure for now. 
+% }
   
 \begin{table*}
     \centering
@@ -233,17 +220,7 @@ I skipped the figure for now.
      bow.v.01 & bend one's knee or body, or lower one's head \\
      shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
      exsert.v.01 & thrust or extend out \\ \hline
-    %  \emph{miscalculation.n.01} & \emph{a mistake in calculating} \\
-    %  blunder.n.01 & an embarrassing mistake \\
-    %  confusion.n.05 & a mistake that results from taking one thing to be another \\
-    %  omission.n.01 & a mistake resulting from neglect \\
-    %  oversight.n.03 & a mistake resulting from inattention \\ \hline
-    %  \emph{overhaul.v.02} & \emph{make repairs, renovations, revisions or adjustments to} \\
-    %  refurbish.v.01 & make brighter and prettier \\
-    %  renovate.v.01 & restore to a previous or better condition \\
-    %  restore.v.01 & return to its original or usable and functioning condition \\
-    %  revamp.v.01 & to patch up or renovate \\ \hline
-
+   
     \end{tabular}
     \caption{Sample candidates for the synset groups with target \emph{a\_cappella\_singing.n.01} and \emph{beckon.v.01} and their corresponding definitions.} 
     \label{tab:dataset_samples}
@@ -325,17 +302,8 @@ opposed to having to manually postedit a large dataset.
 This is justified because we are interested in
 how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
 
-\enote{hs}{the following should be more formal -- we can
-  probably use Timo's notation}
-
-
-%For both tasks, we calculate the probability
-%that the string
-%of being generated for the underscore
-%for the
-%string representation of the synset (i.e., $t \rightarrow
-%\bm{t}$).    We then rank the candidates in ${\cal G}(t)$ based
-%on their probabilities.
+% \enote{hs}{the following should be more formal -- we can
+%   probably use Timo's notation}
 
 \begin{table*}
 \centering
@@ -359,32 +327,21 @@ the language model has to predict.}
 
 \subsection{Baselines}
 
-\enote{hs}{below: we should probably use formal notation for
-  both cases}
-\enote{ks}{Is it formal enough with the equations?} 
+% \enote{hs}{below: we should probably use formal notation for
+%   both cases}
+% \enote{ks}{Is it formal enough with the equations?} 
   
 In this study, we focus on masked language models and
 autoregressive language models. For a masked language model
 $M$, the probability of a candidate $c \in {\cal G}(t)$ on W2D  is calculated as:
 
 \begin{equation*}
-    P_{M_{W2D}}^c = \prod_{i=1}^{N}P(\bm{t}^i~|~Q_{N}^{c})
-\end{equation*}
-\begin{equation*}
   P\uprm{W2D}{M} (c|t) = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|D(c,|\bm{t}|))
 \end{equation*}
-where $\bm{t}$ is the target word of ${\cal G}(t)$ tokenized into $N$ tokens, $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^N]$. $Q_{N}^{c}$ is the input query containing the definition of candidate $c$ and $N$ consecutive mask tokens. For an autoregressive language model $A$, we calculate the probability of generating the target word by multiplying the probabilities of individual tokens given the query $Q^c$ and previous correct tokens of the target:
-
-\begin{equation*}
-    P_{A_{W2D}}^c = \prod_{i=1}^{N}P(\bm{t}^i~|~[Q^{c},\bm{t}^{1},...,\bm{t}^{i-1}])
-\end{equation*}
+where $\bm{t} = [\bm{t}^1, \bm{t}^2,...,\bm{t}^{|\bm{t}|}]$ produced by the tokenizer of $M$. $D(c,|\bm{t}|)$ is the input query containing the definition of candidate $c$ and $|\bm{t}|$ consecutive mask tokens replacing the underscore in the patterns. For an autoregressive language model $A$, we calculate the probability of generating the target word by multiplying the probabilities of individual tokens given the query $D(c)$ and previous correct tokens of the target:
 
 \begin{equation*}
     P\uprm{W2D}{A} = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|D(c),\bm{t}^{1},...,\bm{t}^{i-1})
-\end{equation*}
-
-\begin{equation*}
- P(w_1|w_2w_3)
 \end{equation*}
 
 For D2W, we need to compare the prediction probabilities of
@@ -395,18 +352,11 @@ lengths of candidate words. To achieve a fair comparison, we
 follow the approach used by \newcite{Xiong20Encyclopedia}. For masked language models, we match the number of mask tokens in an input query to the token count of each candidate. We, then, take the average log-probability of the masked tokens for ranking:
 
 \begin{equation*}
-    P_{M_{D2W}}^c = \frac{1}{L}\sum_{i=1}^{L}\text{log}~P(\bm{c}^i~|~Q_{L}^{t})
-\end{equation*}
-\begin{equation*}
     P\uprm{D2W}{M}(c|t) =
     \frac{1}{|\bm{c}|}\sum_{i=1}^{|\bm{c}|}\log P(\bm{c}^i |
     D(t,|\bm{c}|))
 \end{equation*}
-where the candidate word $\bm{c}$ is tokenized to $L$ tokens, $\bm{c} = [\bm{c}^1, \bm{c}^2,...,\bm{c}^L]$. For autoregressive models, we use the probability of only the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
-
-\begin{equation*}
-    P_{A_{D2W}}^c = P(\bm{c}^1~|~Q^{t})
-\end{equation*}
+For autoregressive models, we use the probability of only the first token for each candidate since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
 
 \begin{equation*}
     P\uprm{D2W}{A}(c|t) =
@@ -431,8 +381,8 @@ sentence.\footnote{Not using capitalization  resulted in
 
 \subsection{Measures}
 
-\enote{hs}{below: since accuracy or precision at 1 is a
-  standard measure, we probably don't need such a detailed description}
+% \enote{hs}{below: since accuracy or precision at 1 is a
+%   standard measure, we probably don't need such a detailed description}
   
 The first measure we use to measure the performance of
 pretrained language models on WDLMPro is precision at 1 (P@1) that measures the performance on successfully finding the target among the candidates. 
@@ -442,12 +392,12 @@ P@1 scores for random ranking of the candidates.
 Another disadvantage of the P@1 measure is that it does not consider the rank of the target among the candidates. 
 In other words, putting the target at the second rank is regarded as bad as putting it at the last rank. Note that calculating precision at a higher value will be less informative since many synset groups have only 5 samples. 
 
-\enote{hs}{below: it's better to describe the measure in
-  general, not for an example}
+% \enote{hs}{below: it's better to describe the measure in
+%   general, not for an example}
   
 To address the limitations of the accuracy measure, we introduce a \textit{rank score} measure which provides a uniform weighting between 0 and 1 for the possible rankings of the target among the candidates. Rank score is calculated as:
 \begin{equation*}
-    RS^M_k = \frac{M-k}{M-1}
+    \text{RS}(M,k) = \frac{M-k}{M-1}
 \end{equation*}
 where $M$ is the number of candidates in a synset group and $k$ is the predicted rank for a target ($k \in
 \{1,...,M\}$). Contrary to the precision measure, rank score is not affected by the number of candidates and the random baseline is always 0.5.  
@@ -476,7 +426,7 @@ score) while RoBERTa large performs best for  verbs
     \begin{tabular}{l|rrrr}
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
-         & P@1 & rank s. & P@1 & \multicolumn{1}{c}{rank s.} \\ \hline
+         & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
      Bert$_{b}$ & 43.7 & 0.82 & 40.7 & 0.82 \\
      Bert$_{l}$ & 44.3 & 0.83 & 39.0 & 0.81 \\
      Roberta$_{b}$ & 45.5 & 0.83 & 49.1 & 0.85 \\
@@ -495,10 +445,10 @@ score) while RoBERTa large performs best for  verbs
 
 \begin{table}
     \centering
-    \begin{tabular}{l|cccc}
+    \begin{tabular}{l|rrrr}
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
-         & P@1 & rank s. & P@1 & rank s. \\ \hline
+         & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
      Bert$_{b}$ & 30.4 & 0.73 & 33.8 & 0.80 \\
      Bert$_{l}$ & 32.6 & 0.75 & 34.0 & 0.81 \\
      Roberta$_{b}$ & 33.3 & 0.75 & 36.0 & 0.78 \\
@@ -507,7 +457,7 @@ score) while RoBERTa large performs best for  verbs
      GPT-2$_{m}$ & 36.2 & 0.79 & 24.8 & 0.69 \\
      GPT-2$_{l}$ & 39.0 & 0.80 & 29.0 & 0.72 \\
      GPT-2$_{xl}$ & 39.9 & 0.81 & 30.3 & 0.73 \\ \hline 
-     Random & 7.6 & 0.5 & 8.0 & 0.5 \\\hline
+     Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
      
     \end{tabular}
     \caption{Precision at 1 and rank scores on D2W}
@@ -546,9 +496,9 @@ nouns.
 
 \begin{table}
     \centering
-    \begin{tabular}{l|cccc}
+    \begin{tabular}{l|rrrr}
     \hline
-         \textbf{Model} & \textbf{rare} & \textbf{medium} & \textbf{frequent} & \textbf{all} \\ \hline
+         \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
      Bert$_{b}$ & 33.7 & 39.2 & 49.7 & 43.7 \\
      Bert$_{l}$ & 32.8 & 38.7 & 51.3 & 44.3 \\
      Roberta$_{b}$ & 38.0 & 42.2 & 49.9 & 45.5 \\
@@ -567,9 +517,9 @@ nouns.
 
 \begin{table}
     \centering
-    \begin{tabular}{l|cccc}
+    \begin{tabular}{l|rrrr}
     \hline
-        \textbf{Model} & \textbf{rare} & \textbf{medium} & \textbf{frequent} & \textbf{all}\\ \hline
+        \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
      Bert$_{b}$ & 20.3 & 26.6 & 36.2 & 30.4 \\
      Bert$_{l}$ & 18.4 & 26.3 & 41.0 & 32.6 \\
      Roberta$_{b}$ & 23.6 & 30.1 & 38.6 & 33.3 \\

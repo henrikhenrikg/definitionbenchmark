@@ -383,9 +383,25 @@ sentence.\footnote{Not using capitalization  resulted in
   poor performance for single token target words for D2W.}
 
 \subsection{Measures}
+We use two measures: precision at 1 (P@1) and a rank score
+(RS), both based on a ranked results list, either of words
+or of definitions. P@1 is the percentage of top-ranked items
+that is correct.
+We define RS as follows:  
+\begin{equation*}
+    \text{RS}(M,k) = \frac{M-k}{M-1}
+\end{equation*}
+where $M=|{\cal G}(t)|$ is the number of candidates  and
+$k$ is the rank of the correct item, $1 \leq k \leq M$.
+Table \ref{tab:dataset_stats} shows that the size of ${\cal G}(t)$
+is highly variable;
+in contrast to P@1, RS is less affected by
+this and the random baseline (cf.\ Tables
+\ref{tab:results_find_the_definition}
+and \ref{tab:results_find_the_word}) is always 0.5.  
 
-% \enote{hs}{below: since accuracy or precision at 1 is a
-%   standard measure, we probably don't need such a detailed description}
+
+\enote{hs}{i think this may a good paragraph we can cut
   
 The first measure we use to measure the performance of
 pretrained language models on WDLMPro is precision at 1 (P@1) that measures the performance on successfully finding the target among the candidates. 
@@ -395,16 +411,10 @@ P@1 scores for random ranking of the candidates.
 Another disadvantage of the P@1 measure is that it does not consider the rank of the target among the candidates. 
 In other words, putting the target at the second rank is regarded as bad as putting it at the last rank. Note that calculating precision at a higher value will be less informative since many synset groups have only 5 samples. 
 
+}
+
 % \enote{hs}{below: it's better to describe the measure in
 %   general, not for an example}
-  
-To address the limitations of the accuracy measure, we introduce a \textit{rank score} measure which provides a uniform weighting between 0 and 1 for the possible rankings of the target among the candidates. Rank score is calculated as:
-\begin{equation*}
-    \text{RS}(M,k) = \frac{M-k}{M-1}
-\end{equation*}
-where $M$ is the number of candidates in a synset group and $k$ is the predicted rank for a target ($k \in
-\{1,...,M\}$). Contrary to the precision measure, rank score is not affected by the number of candidates and the random baseline is always 0.5.  
-
 \section{Results}
 
 Table \ref{tab:results_find_the_definition} and Table

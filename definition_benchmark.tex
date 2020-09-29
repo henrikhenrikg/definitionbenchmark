@@ -63,7 +63,7 @@
 \hspace{1cm}\arabic{notecounter} $<<<$ ##1: ##2
 $>>>$\hspace{1cm}}}}}
 \enoteson
-%\enotesoff
+\enotesoff
 
 \def\uprm#1#2{\mbox{$_#2^{\hbox{\scriptsize #1}}$}}
 
@@ -205,6 +205,29 @@ Table \ref{tab:dataset_stats} shows statistics of the dataset.
 % I skipped the figure for now. 
 % }
   
+\begin{table}
+\centering
+\begin{tabular}{ll}
+\multicolumn{2}{c}{\textbf{Masked Language Model (MLM)}} \\\hline
+\multirow{3}{*}{\textbf{Noun}} & \underline{\hspace{3mm}} is \texttt{<DEF>} \\
+ & \underline{\hspace{3mm}} means \texttt{<DEF>}  \\% \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
+& \underline{\hspace{3mm}} is defined as \texttt{<DEF>} \\\hline
+ \multirow{2}{*}{\textbf{Verb}} & definition of \underline{\hspace{3mm}} is to \texttt{<DEF>} \\
+ & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}}  \\ \hline\hline
+ \multicolumn{2}{c}{\textbf{Autoregressive Language Model (ALM)}}\\ \hline
+\multirow{1}{*}{\textbf{Noun}} & \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
+  \hline %\texttt{<DEF>} is the definition of an
+ %\underline{\hspace{3mm}}\\ \hline
+ \multirow{1}{*}{\textbf{Verb}} &   to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
+\end{tabular}
+\caption{Patterns used for querying language models for
+  nouns and verbs.
+\texttt{<DEF>} refers to the definition,
+\underline{\hspace{3mm}} is the mask or missing word that
+the language model has to predict.}
+\label{tab:patterns}
+\end{table}
+
 \begin{table*}
     \centering
     \begin{tabular}{l|l}
@@ -299,25 +322,6 @@ For the cases with multiple patterns, we average the prediction scores accross p
 % \enote{hs}{the following should be more formal -- we can
 %   probably use Timo's notation}
 
-\begin{table*}
-\centering
-\begin{tabular}{lll}
-\hline
-& \textbf{Masked Language Model} & \textbf{Autoregressive Language Model}\\ \hline
-\multirow{3}{*}{\textbf{Noun}} & \underline{\hspace{3mm}} is \texttt{<DEF>} & \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
- & \underline{\hspace{3mm}} means \texttt{<DEF>} & \\% \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
- & \underline{\hspace{3mm}} is defined as \texttt{<DEF>} & \\ \hline %\texttt{<DEF>} is the definition of an \underline{\hspace{3mm}}\\ \hline
- \multirow{2}{*}{\textbf{Verb}} & definition of \underline{\hspace{3mm}} is to \texttt{<DEF>} & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
- & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} & \\ \hline
- 
-\end{tabular}
-\caption{Patterns used for querying language models for
-  nouns and verbs.
-\texttt{<DEF>} refers to the definition,
-\underline{\hspace{3mm}} is the mask or missing word that
-the language model has to predict.}
-\label{tab:patterns}
-\end{table*}
 
 \subsection{Baselines}
 
@@ -417,22 +421,22 @@ In other words, putting the target at the second rank is regarded as bad as putt
 %   general, not for an example}
 \section{Results}
 
-Table \ref{tab:results_find_the_definition} and Table
-\ref{tab:results_find_the_word} present the results for the
-BERT, RoBERTa and GPT-2 models
-for W2D and D2W. Performance is clearly better than the
+Tables \ref{tab:results_find_the_definition} and 
+\ref{tab:results_find_the_word} present
+W2D and D2W
+results for
+BERT, RoBERTa and GPT-2. Performance is clearly better than the
 random baseline.
 Larger models perform generally better than smaller
 ones in both tasks as expected. For W2D,
-best performance is achieved by GPT-2$^{xl}$ model for 
-nouns (53.1\% P@1, 0.85 rank score) while RoBERTa large
-performs the best for  verbs (54.4\% P@1, 0.88 rank
-score). Performance on D2W is
-significantly lower than for W2D for all
-models.  As was the case for W2D, GPT-2$^{xl}$ achieves the
-best results on D2W for  nouns (39.9\% P@1, 0.81 rank
-score) while RoBERTa large performs best for  verbs
-(45.3\% P@1, 0.83 rank score).
+best performance is achieved by GPT-2$^{xl}$  for 
+nouns (53.1\% P@1, 0.85 RS) and by RoBERTa large
+for  verbs (54.4\% P@1, 0.88 RS). Performance on D2W is
+much lower than for W2D for all
+models.  Similar to W2D, GPT-2$^{xl}$ achieves the
+best results on D2W for  nouns (39.9\% P@1, 0.81 RS)
+and  RoBERTa  for  verbs
+(45.3\% P@1, 0.83 RS).
 
 \begin{table}
     \centering
@@ -451,7 +455,7 @@ score) while RoBERTa large performs best for  verbs
      Random & 7.6 & 0.50 & 7.8 & 0.50 \\\hline
      
     \end{tabular}
-    \caption{Precision at 1 and rank scores on W2D}
+    \caption{Precision at 1 and rank score on W2D}
     \label{tab:results_find_the_definition}
 \end{table}
 
@@ -473,39 +477,36 @@ score) while RoBERTa large performs best for  verbs
      Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
      
     \end{tabular}
-    \caption{Precision at 1 and rank scores on D2W}
+    \caption{Precision at 1 and rank score on D2W}
     \label{tab:results_find_the_word}
 \end{table}
 
 
-We also investigate the effect of the frequency of the
-target word on model performance. For this part, we
-focus only on  nouns since most  verbs in our dataset
-are relatively frequent. Because these models are trained on
-different corpora, frequency of a target word (or number of
-times a model sees a target word during training) can be
-different across  models. Nonetheless, we group the
-target words based on the number of times they occur in the
-Westbury Wikipedia Corpus (WWC) \cite{WWC} as an
-approximation. We
-define three subsets based on the occurrence counts of the
-target words in WWC: \textit{rare} (fewer than 10 occurrences),
+We also investigate the effect of frequency
+on the models' understanding of word meaning.
+To this end, we stratify words into 
+\textit{rare} (fewer than 10 occurrences),
  \textit{medium} (10 to 99 occurrences) and
  \textit{frequent}
-(100 or more occurrences).\footnote{Both the corpus and
-  the target words are tokenized using NLTK tokenizer.  Targets
-  that contain more than 3 tokens are taken as rare without
-  counting.}. Table
-\ref{tab:freq_results_find_the_definition} and Table
-\ref{tab:freq_results_find_the_word} present the  results
-based on target word frequency for
-W2D and D2W.
-These results show that
+ (100 or more occurrences), based on occurrences in WWC
+ (Westbury Wikipedia Corpus, \newcite{WWC}), where we use
+ WWC frequency as a substitute for the corpora the models were
+ trained on.
+ Targets 
+ that have more than 3 tokens
+(based on NLTK tokenization)
+ are taken as rare without
+  counting.
+We
+focus  on  nouns since most  verbs in our dataset
+are relatively frequent. Table
+\ref{tab:freq_results_find_the_definition} shows that, for W2D,
 all models have a poor understanding of the meaning of 
 rare and medium words. Moreover, even for 
-frequent words P@1 scores are below 60\% on W2D and below 50\% on D2W for all models demonstrating that even  large and sophisticated language
-models fail to learn nuances in the meaning of many
+frequent words, P@1 is below 60\%,  demonstrating that even  large and sophisticated language
+models fail to fully understand the meaning of many
 nouns.
+See appendix for D2W results.
 
 \begin{table}
     \centering
@@ -528,6 +529,35 @@ nouns.
 \end{table}
 
 
+
+\section{Conclusion}
+We introduced
+WDLMPro (Word Definitions Language Model
+Probing),
+a
+probing tests that helps us analyze  how well a model
+understands word meaning. This is complementary to existing
+probing tests that investigate the knowledge of
+relations between words or entities.
+WDLMPro is based on WordNet word definitions.
+We evaluated three popular pretrained language
+models on the W2D (word to definition) and D2W (definition
+to word) tasks that we define in WDLMPro. Our findings show
+that, despite their remarkable performance on many
+downstream tasks, these models struggle to match a word and
+its true definition, suggesting an insufficient
+understanding of word meaning. WDLMPro provides an important
+evaluation benchmark, encouraging design and training of
+models with precise word understanding.
+
+\bibliography{definition_benchmark}
+\bibliographystyle{acl_natbib}
+
+\newpage
+
+put this table in the appendix
+
+
 \begin{table}
     \centering
     \begin{tabular}{l|rrrr}
@@ -548,28 +578,5 @@ nouns.
     \label{tab:freq_results_find_the_word}
 \end{table}
 
-
-\section{Conclusion}
-
-Probing tests help us understand what information
-is stored in the parameters of a model and how well a model
-understands a given word or concept. Currently available
-probing tests focus on investigating the 
-knowledge of relations between words or entities. In this study, we
-introduced the WDLMPro (Word Definitions Language Model Probing)
-dataset for evaluating word understanding of language models
-in a more direct way based on word definitions. We evaluated
-three popular pretrained language models on
-the W2D (word to definition) and D2W (definition to word)
-tasks that we define in
-WDLMPro. Our findings show that, despite their remarkable
-performance on many downstream tasks, these models struggle
-to match a word and its true definition, suggesting an
-insufficient understanding of word meaning. WDLMPro provides an
-important evaluation benchmark, encouraging design and
-training of models with precise word understanding.
-
-\bibliography{definition_benchmark}
-\bibliographystyle{acl_natbib}
 
 \end{document}

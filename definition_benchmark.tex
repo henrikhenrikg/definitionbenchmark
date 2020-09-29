@@ -192,9 +192,8 @@ Table
 \ref{tab:dataset_samples} displays five members from ${\cal
   G} (t)$ 
 and their definitions
-for the targets
-\emph{a\_cappella\_singing.n.01} and
-\emph{beckon.v.01}. 
+for the target
+\emph{a\_cappella\_singing.n.01}. 
 Table \ref{tab:dataset_stats} shows statistics of the dataset.
 
 % \enote{hs}{yes a figure would be nice
@@ -238,14 +237,14 @@ the language model has to predict.}
      crooning.n.01 & singing in a soft low tone \\
      singalong.n.01 & informal group singing of popular songs \\
      bel\_canto.n.01 & a style of operatic singing \\ \hline
-     \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
-     applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
-     bow.v.01 & bend one's knee or body, or lower one's head \\
-     shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
-     exsert.v.01 & thrust or extend out \\ \hline
+    %  \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
+    %  applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
+    %  bow.v.01 & bend one's knee or body, or lower one's head \\
+    %  shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
+    %  exsert.v.01 & thrust or extend out \\ \hline
    
     \end{tabular}
-    \caption{Sample candidates for the synset groups with targets \emph{a\_cappella\_singing.n.01} and \emph{beckon.v.01} and their corresponding definitions.} 
+    \caption{Sample candidates for the synset group with target \emph{a\_cappella\_singing.n.01} and their corresponding definitions.} 
     \label{tab:dataset_samples}
 \end{table*}
 
@@ -314,7 +313,7 @@ the string ``miscalculation'' (``warm
 up'').
 
 Table \ref{tab:patterns} shows that we define different templates for masked and autoregressive language models.
-For the cases with multiple patterns, we average the prediction scores accross patterns and 
+For the masked language models, we average the prediction scores accross patterns before ranking the candidates.
 % We define alternatives (e.g., ``definition of \underline{\hspace{3mm}}'', ``definition of a \underline{\hspace{3mm}}'', ``definition of an \underline{\hspace{3mm}}'') and will then use, for each word, the alternative that gives the best result. 
 % This allows us to generate  WDLMPro automatically as opposed to having to manually postedit a large dataset.
 % This is justified because we are interested in how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
@@ -373,7 +372,7 @@ are often easily predictable from the first token.
 
 We apply our probing test to two different pretrained
 masked language models (BERT and
-RoBERTa) and one auto-regressive language model
+RoBERTa) and one autoregressive language model
 (GPT-2). 
 In order to investigate the effect of model
 size on the performance, we experiment with both
@@ -401,42 +400,25 @@ Table \ref{tab:dataset_stats} shows that the size of ${\cal G}(t)$
 is highly variable;
 in contrast to P@1, RS is less affected by
 this and the random baseline (cf.\ Tables
-\ref{tab:results_find_the_definition}
-and \ref{tab:results_find_the_word}) is always 0.5.  
+\ref{tab:results_W2D}
+and \ref{tab:results_D2W}) is always 0.5.  
 
-
-\enote{hs}{i think this may a good paragraph we can cut
-  
-The first measure we use to measure the performance of
-pretrained language models on WDLMPro is precision at 1 (P@1) that measures the performance on successfully finding the target among the candidates. 
-However, as shown in Table \ref{tab:dataset_stats}, the size of ${\cal G}(t)$ (number of candidates) varies greatly across synset groups making the resulting precision scores harder to interpret. 
-To provide some intuition, we provide the baseline theoretic
-P@1 scores for random ranking of the candidates. 
-Another disadvantage of the P@1 measure is that it does not consider the rank of the target among the candidates. 
-In other words, putting the target at the second rank is regarded as bad as putting it at the last rank. Note that calculating precision at a higher value will be less informative since many synset groups have only 5 samples. 
-
-}
-
-% \enote{hs}{below: it's better to describe the measure in
-%   general, not for an example}
 \section{Results}
 
-Tables \ref{tab:results_find_the_definition} and 
-\ref{tab:results_find_the_word} present
+Tables \ref{tab:results_W2D} and 
+\ref{tab:results_D2W} present
 W2D and D2W
 results for
 BERT, RoBERTa and GPT-2. Performance is clearly better than the
 random baseline.
 Larger models perform generally better than smaller
-ones in both tasks as expected. For W2D,
+ones and RoBERTa consistently outperforms BERT in both tasks as expected. For W2D,
 best performance is achieved by GPT-2$^{xl}$  for 
-nouns (53.1\% P@1, 0.85 RS) and by RoBERTa large
-for  verbs (54.4\% P@1, 0.88 RS). Performance on D2W is
-much lower than for W2D for all
-models.  Similar to W2D, GPT-2$^{xl}$ achieves the
-best results on D2W for  nouns (39.9\% P@1, 0.81 RS)
-and  RoBERTa  for  verbs
-(45.3\% P@1, 0.83 RS).
+nouns (45.1\% P@1, 0.80 RS) and by RoBERTa large
+for  verbs (48.0\% P@1, 0.84 RS). Performance on D2W is much lower than for W2D for all models. For nouns, RoBERTa large and GPT-2$^{xl}$ perform similarly (28.1\% and 27.1 \%P@1, 0.69 and 0.71 RS, respectively) while RoBERTa large achieves the best results for verbs (39.3\% P@1, 0.79 RS).
+Poor performance on D2W compared to W2D might be due to language models' ability to distinguish different definitions better than individiual words since definitions are more informative and definitive than individiual words. 
+
+\enote{KS}{Does the above argument make sense? I thought it can be beneficial to discuss the significant performance difference between W2D and D2W which are intuitively at the same (or similar) difficulty level. Another possible reason might be the different scoring we use for ranking candidates, but I believe this might not sounds so nice. }
 
 \begin{table}
     \centering
@@ -444,19 +426,19 @@ and  RoBERTa  for  verbs
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-     Bert$_{b}$ & 43.7 & 0.82 & 40.7 & 0.82 \\
-     Bert$_{l}$ & 44.3 & 0.83 & 39.0 & 0.81 \\
-     Roberta$_{b}$ & 45.5 & 0.83 & 49.1 & 0.85 \\
-     Roberta$_{l}$ & 50.0 & 0.85 & 54.4 & 0.88 \\ \hline
-     GPT-2$_{s}$ & 44.7 & 0.81 & 43.0 & 0.80 \\
-     GPT-2$_{m}$ & 47.6 & 0.82 & 42.3 & 0.80 \\
-     GPT-2$_{l}$ & 51.7 & 0.84 & 46.7 & 0.83 \\
-     GPT-2$_{xl}$ & 53.1 & 0.85 & 47.0 & 0.83 \\ \hline 
+     Bert$_{b}$ & 34.0 & 0.73 & 33.3 & 0.73 \\
+     Bert$_{l}$ & 34.0 & 0.73 & 31.7 & 0.72 \\
+     Roberta$_{b}$ & 36.3 & 0.75 & 40.6 & 0.79 \\
+     Roberta$_{l}$ & 40.9 & 0.78 & 48.0 & 0.84 \\ \hline
+     GPT-2$_{s}$ & 37.3 & 0.75 & 43.0 & 0.80 \\
+     GPT-2$_{m}$ & 39.5 & 0.77 & 42.3 & 0.80 \\
+     GPT-2$_{l}$ & 44.0 & 0.79 & 46.7 & 0.83 \\
+     GPT-2$_{xl}$ & 45.1 & 0.80 & 47.0 & 0.83 \\ \hline 
      Random & 7.6 & 0.50 & 7.8 & 0.50 \\\hline
      
     \end{tabular}
-    \caption{Precision at 1 and rank score on W2D}
-    \label{tab:results_find_the_definition}
+    \caption{P@1 and rank scores on W2D}
+    \label{tab:results_W2D}
 \end{table}
 
 
@@ -466,66 +448,50 @@ and  RoBERTa  for  verbs
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-     Bert$_{b}$ & 30.4 & 0.73 & 33.8 & 0.80 \\
-     Bert$_{l}$ & 32.6 & 0.75 & 34.0 & 0.81 \\
-     Roberta$_{b}$ & 33.3 & 0.75 & 36.0 & 0.78 \\
-     Roberta$_{l}$ & 35.7 & 0.76 & 45.3 & 0.83 \\ \hline
-     GPT-2$_{s}$ & 34.2 & 0.78 & 27.7 & 0.69 \\
-     GPT-2$_{m}$ & 36.2 & 0.79 & 24.8 & 0.69 \\
-     GPT-2$_{l}$ & 39.0 & 0.80 & 29.0 & 0.72 \\
-     GPT-2$_{xl}$ & 39.9 & 0.81 & 30.3 & 0.73 \\ \hline 
+     Bert$_{b}$ & 23.1 & 0.65 & 19.0 & 0.65 \\
+     Bert$_{l}$ & 24.8 & 0.65 & 19.0 & 0.65 \\
+     Roberta$_{b}$ & 25.2 & 0.67 & 29.7 & 0.73 \\
+     Roberta$_{l}$ & 28.1 & 0.69 & 39.3 & 0.79 \\ \hline
+     GPT-2$_{s}$ & 21.2 & 0.66 & 27.7 & 0.69 \\
+     GPT-2$_{m}$ & 22.6 & 0.68 & 24.8 & 0.69 \\
+     GPT-2$_{l}$ & 25.9 & 0.70 & 29.0 & 0.72 \\
+     GPT-2$_{xl}$ & 27.1 & 0.71 & 30.3 & 0.73 \\ \hline 
      Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
      
     \end{tabular}
-    \caption{Precision at 1 and rank score on D2W}
-    \label{tab:results_find_the_word}
+    \caption{P@1 and rank scores on D2W}
+    \label{tab:results_D2W}
 \end{table}
 
 
-We also investigate the effect of frequency
-on the models' understanding of word meaning.
-To this end, we stratify words into 
-\textit{rare} (fewer than 10 occurrences),
- \textit{medium} (10 to 99 occurrences) and
- \textit{frequent}
- (100 or more occurrences), based on occurrences in WWC
- (Westbury Wikipedia Corpus, \newcite{WWC}), where we use
- WWC frequency as a substitute for the corpora the models were
- trained on.
- Targets 
- that have more than 3 tokens
-(based on NLTK tokenization)
- are taken as rare without
-  counting.
-We
-focus  on  nouns since most  verbs in our dataset
-are relatively frequent. Table
-\ref{tab:freq_results_find_the_definition} shows that, for W2D,
-all models have a poor understanding of the meaning of 
-rare and medium words. Moreover, even for 
-frequent words, P@1 is below 60\%,  demonstrating that even  large and sophisticated language
-models fail to fully understand the meaning of many
-nouns.
-See appendix for D2W results.
+We also investigate the effect of frequency on the models' understanding of word meaning.
+To this end, we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the corpora the models were trained on.
+
+We focus on nouns since most verbs in our dataset are relatively frequent. 
+Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words (See appendix for D2W results). 
+Moreover, even for frequent words, P@1 is below 50\% (except GPT-2$_{xl}$ which gives 50.5\%). 
+
+We investigate the predictions of the GPT-2$_{xl}$ model for the medium frequency verb `beckon' and frequent noun `roleplaying' on W2D task. The model matches the word `beckon' to definition `signal by winking', while the target definition is `signal with the hands or nod'. This shows that GPT-2$_{xl}$ is able to understand that `beckon' is a type of signaling but it fails to learn the specific type. Similarly, it matches the noun `roleplaying' to definition `acting the part of a character on stage' while target definition is `acting a particular role (as in psychotherapy)' failing to understand what type of acting the word refers to. These results demonstrate that even large and sophisticated language models fail to fully understand the meaning of many words. 
+
 
 \begin{table}
     \centering
     \begin{tabular}{l|rrrr}
     \hline
          \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
-     Bert$_{b}$ & 33.7 & 39.2 & 49.7 & 43.7 \\
-     Bert$_{l}$ & 32.8 & 38.7 & 51.3 & 44.3 \\
-     Roberta$_{b}$ & 38.0 & 42.2 & 49.9 & 45.5 \\
-     Roberta$_{l}$ & 40.6 & 45.2 & 55.9 & 50.0 \\ \hline
-     GPT-2$_{s}$ & 37.2 & 41.1 & 49.3 & 44.7 \\
-     GPT-2$_{m}$ & 38.5 & 43.0 & 53.3 & 47.6 \\
-     GPT-2$_{l}$ & 41.8 & 47.3 & 57.7 & 51.7 \\
-     GPT-2$_{xl}$ & 42.2 & 48.4 & 59.5 & 53.1 \\ \hline
+     Bert$_{b}$ & 25.3 & 30.5 & 39.1 & 34.0 \\
+     Bert$_{l}$ & 22.7 & 29.1 & 40.6 & 34.0 \\
+     Roberta$_{b}$ & 30.2 & 34.2 & 39.6 & 36.3 \\
+     Roberta$_{l}$ & 32.3 & 37.5 & 45.8 & 40.9 \\ \hline
+     GPT-2$_{s}$ & 31.9 & 34.5 & 40.6 & 37.3 \\
+     GPT-2$_{m}$ & 32.6 & 35.6 & 44.0 & 39.5 \\
+     GPT-2$_{l}$ & 35.8 & 40.3 & 49.0 & 44.0 \\
+     GPT-2$_{xl}$ & 36.3 & 41.0 & 50.5 & 45.1 \\ \hline
      Random & 6.6 & 7.0 & 8.2 & 7.6 \\ \hline 
      
     \end{tabular}
-    \caption{P@1 scores of W2D for nouns based on target word frequency.}
-    \label{tab:freq_results_find_the_definition}
+    \caption{P@1 scores on W2D for nouns based on target word frequency.}
+    \label{tab:freq_results_W2D}
 \end{table}
 
 
@@ -553,30 +519,51 @@ models with precise word understanding.
 \bibliography{definition_benchmark}
 \bibliographystyle{acl_natbib}
 
-\newpage
+\appendix
 
-put this table in the appendix
+\section{Appendices}
+\label{sec:appendix}
 
 
-\begin{table}
+\begin{table}[h]
     \centering
     \begin{tabular}{l|rrrr}
     \hline
         \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
-     Bert$_{b}$ & 20.3 & 26.6 & 36.2 & 30.4 \\
-     Bert$_{l}$ & 18.4 & 26.3 & 41.0 & 32.6 \\
-     Roberta$_{b}$ & 23.6 & 30.1 & 38.6 & 33.3 \\
-     Roberta$_{l}$ & 23.8 & 31.7 & 42.3 & 35.7 \\ \hline
-     GPT-2$_{s}$ & 26.5 & 30.4 & 39.0 & 34.2 \\
-     GPT-2$_{m}$ & 26.0 & 30.5 & 42.8 & 36.2 \\
-     GPT-2$_{l}$ & 28.2 & 33.2 & 45.9 & 39.0 \\
-     GPT-2$_{xl}$ & 27.3 & 33.0 & 47.9 & 39.9 \\ \hline
+     Bert$_{b}$ & 14.6 & 20.3 & 27.8 & 23.1 \\
+     Bert$_{l}$ & 11.9 & 19.7 & 32.2 & 24.8\\
+     Roberta$_{b}$ & 17.3 & 23.7 & 28.9 & 25.2 \\
+     Roberta$_{l}$ & 17.3 & 25.1 & 33.6 & 28.1 \\ \hline
+     GPT-2$_{s}$ & 16.3 & 19.1 & 24.7 & 21.2 \\
+     GPT-2$_{m}$ & 15.7 & 19.0 & 27.0 & 22.6 \\
+     GPT-2$_{l}$ & 17.8 & 22.2 & 30.8 & 25.9 \\
+     GPT-2$_{xl}$ & 18.0 & 22.6 & 32.7 & 27.1 \\ \hline
      Random & 6.7 & 7.1 & 8.3 & 7.6 \\ \hline 
      
     \end{tabular}
-    \caption{P@1 scores on D2W for  nouns based on target word frequency.}
-    \label{tab:freq_results_find_the_word}
+    \caption{P@1 scores on D2W for nouns based on target word frequency.}
+    \label{tab:freq_results_D2W}
 \end{table}
 
+
+% \begin{table*}
+%     \centering
+%     \begin{tabular}{l|l|rrrrrr}
+%         \hline
+%          & \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Pattern 1}} & \multicolumn{2}{c}{\textbf{Pattern 2}} & \multicolumn{2}{c}{\textbf{Pattern 3}} \\
+%          & & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
+%      \multirow{4}{*}{\textbf{W2D}} & Bert$_{b}$ & 27.4 & 0.68 & 30.7 & 0.72 & 33.5 & 0.73\\
+%      & Bert$_{l}$ & 28.0 & 0.68 & 31.7 & 0.71 & 31.8 & 0.72 \\
+%      & Roberta$_{b}$ & 26.8 & 0.68 & 34.5 & 0.74 & 35.1 & 0.74 \\
+%      & Roberta$_{l}$ & 32.2 & 0.72 & 38.4 & 0.76 & 39.7 & 0.77 \\ \hline
+%      \multirow{4}{*}{\textbf{D2W}} & Bert$_{b}$ & 20.7 & 0.63 & 23.0 & 0.65 & 23.3 & 0.64\\
+%      & Bert$_{l}$ & 22.5 & 0.64 & 25.2 & 0.65 & 24.1 & 0.64 \\
+%      & Roberta$_{b}$ & 20.7 & 0.64 & 26.0 & 0.67 & 24.7 & 0.67 \\
+%      & Roberta$_{l}$ & 24.4 & 0.67 & 28.7 & 0.70 & 27.8 & 0.69 \\ \hline
+     
+%     \end{tabular}
+%     \caption{Results for individual patterns on W2D and D2W tasks.}
+%     \label{tab:pattern_results_noun}
+% \end{table*}
 
 \end{document}

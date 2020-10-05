@@ -94,7 +94,6 @@ help guide research on LMs in the future.
 
 \section{Introduction}
 
-% Maybe it is better to remove the first paragraph because of space restrictions?
 Natural language processing (NLP)  has advanced drastically
 in the last decade with the design of larger and more
 sophisticated models, availability of larger
@@ -546,24 +545,24 @@ models with precise word understanding.
 \end{table}
 
 
-% \begin{table*}
-%     \centering
-%     \begin{tabular}{l|l|rrrrrr}
-%         \hline
-%          & \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Pattern 1}} & \multicolumn{2}{c}{\textbf{Pattern 2}} & \multicolumn{2}{c}{\textbf{Pattern 3}} \\
-%          & & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-%      \multirow{4}{*}{\textbf{W2D}} & Bert$_{b}$ & 27.4 & 0.68 & 30.7 & 0.72 & 33.5 & 0.73\\
-%      & Bert$_{l}$ & 28.0 & 0.68 & 31.7 & 0.71 & 31.8 & 0.72 \\
-%      & Roberta$_{b}$ & 26.8 & 0.68 & 34.5 & 0.74 & 35.1 & 0.74 \\
-%      & Roberta$_{l}$ & 32.2 & 0.72 & 38.4 & 0.76 & 39.7 & 0.77 \\ \hline
-%      \multirow{4}{*}{\textbf{D2W}} & Bert$_{b}$ & 20.7 & 0.63 & 23.0 & 0.65 & 23.3 & 0.64\\
-%      & Bert$_{l}$ & 22.5 & 0.64 & 25.2 & 0.65 & 24.1 & 0.64 \\
-%      & Roberta$_{b}$ & 20.7 & 0.64 & 26.0 & 0.67 & 24.7 & 0.67 \\
-%      & Roberta$_{l}$ & 24.4 & 0.67 & 28.7 & 0.70 & 27.8 & 0.69 \\ \hline
+\begin{table*}
+    \centering
+    \begin{tabular}{ll|rrrrrr|rr|rr}
+        \cline{2-12} 
+         & \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Pattern 1}} & \multicolumn{2}{c}{\textbf{Pattern 2}} & \multicolumn{2}{c}{\textbf{Pattern 3}} & \multicolumn{2}{c}{\textbf{Ensemble}} & \multicolumn{2}{c}{\textbf{Oracle}} \\
+         & & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \cline{2-12}
+     \multirow{4}{*}{\textbf{W2D}} & Bert$_{b}$ & 27.4 & 0.68 & 30.7 & 0.72 & 33.5 & 0.73 & 34.0 & 0.73 & 43.7 & 0.82 \\
+     & Bert$_{l}$ & 28.0 & 0.68 & 31.7 & 0.71 & 31.8 & 0.72 & 34.0 & 0.73 & 44.3 & 0.83 \\
+     & Roberta$_{b}$ & 26.8 & 0.68 & 34.5 & 0.74 & 35.1 & 0.74 & 36.3 & 0.75 & 45.5 & 0.83 \\
+     & Roberta$_{l}$ & 32.2 & 0.72 & 38.4 & 0.76 & 39.7 & 0.77 & 40.9 & 0.78 & 50.0 & 0.85 \\ \cline{2-12}
+     \multirow{4}{*}{\textbf{D2W}} & Bert$_{b}$ & 20.7 & 0.63 & 23.0 & 0.65 & 23.3 & 0.64 & 23.1 & 0.65 & 30.4 & 0.73 \\
+     & Bert$_{l}$ & 22.5 & 0.64 & 25.2 & 0.65 & 24.1 & 0.64 & 24.8 & 0.65 & 32.6 & 0.75 \\
+     & Roberta$_{b}$ & 20.7 & 0.64 & 26.0 & 0.67 & 24.7 & 0.67 & 25.2 & 0.67 & 33.3 & 0.75 \\
+     & Roberta$_{l}$ & 24.4 & 0.67 & 28.7 & 0.70 & 27.8 & 0.69 & 28.1 & 0.69 & 35.7 & 0.76 \\ \cline{2-12}
      
-%     \end{tabular}
-%     \caption{Results for individual patterns on W2D and D2W tasks.}
-%     \label{tab:pattern_results_noun}
-% \end{table*}
+    \end{tabular}
+    \caption{Results of MLMs for individual patterns, ensemble and oracle for nouns on W2D and D2W tasks. For oracle, best performing pattern is selected for each sample.}
+    \label{tab:pattern_results_noun}
+\end{table*}
 
 \end{document}

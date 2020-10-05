@@ -432,20 +432,23 @@ and \ref{tab:results_D2W}) is always 0.5.
 
 \section{Results}
 
-Tables \ref{tab:results_W2D} and 
-\ref{tab:results_D2W} present
-W2D and D2W
-results for
-BERT, RoBERTa and GPT-2. Performance is clearly better than the
-random baseline.
-Larger models perform generally better than smaller
-ones and RoBERTa consistently outperforms BERT.
+Tables \ref{tab:results_W2D} and \ref{tab:results_D2W}
+present W2D and D2W results for BERT, RoBERTa and
+GPT-2. Performance is clearly better than the random
+baseline.  Larger models perform generally better than
+smaller ones and RoBERTa consistently outperforms BERT.  For
+W2D, best performance is achieved by GPT-2$_{xl}$ for nouns
+(45.1 P@1, 0.80 RS) and by RoBERTa large for verbs (48.0
+P@1, 0.84 RS). Performance on D2W is much lower than for W2D
+for all models. For nouns, RoBERTa large and GPT-2$_{xl}$
+perform similarly (28.1 and 27.1 P@1, 0.69 and 0.71 RS)
+while RoBERTa large achieves the best results for verbs
+(39.3 P@1, 0.79 RS).  Poor performance on D2W compared to
+W2D might be due to language models' ability to distinguish
+different definitions better than individual words since
+definitions are more informative than individual words.
+
 %in both tasks as expected.
-For W2D,
-best performance is achieved by GPT-2$_{xl}$  for 
-nouns (45.1 P@1, 0.80 RS) and by RoBERTa large
-for  verbs (48.0 P@1, 0.84 RS). Performance on D2W is much lower than for W2D for all models. For nouns, RoBERTa large and GPT-2$_{xl}$ perform similarly (28.1 and 27.1 P@1, 0.69 and 0.71 RS) while RoBERTa large achieves the best results for verbs (39.3 P@1, 0.79 RS).
-Poor performance on D2W compared to W2D might be due to language models' ability to distinguish different definitions better than individiual words since definitions are more informative  than individual words. 
 
 \enote{KS}{Does the above argument make sense? I thought it can be beneficial to discuss the significant performance difference between W2D and D2W which are intuitively at the same (or similar) difficulty level. Another possible reason might be the different scoring we use for ranking candidates, but I believe this might not sounds so nice. }
 

@@ -81,8 +81,9 @@ language models are commonly probed by querying them with
 `fill in the blank' style cloze questions. Existing probing
 datasets mainly focus on knowledge about \emph{relations between}
 words and entities. We introduce WDLMPro (Word Definitions
-Language Model Probing) to \emph{evaluate word understanding directly} using definitions of
-the words. In our experiments, three popular pretrained
+Language Model Probing) to \emph{evaluate word understanding
+  directly} using dictionary definitions of
+words. In our experiments, three popular pretrained
 language models
 struggle to match words and their  definitions. This
 indicates that they understand many words poorly and that
@@ -104,7 +105,7 @@ the use of distributed word representations, which became a
 fundamental building block for NLP systems. Static word
 embeddings were followed by, generally LSTM based, deep
 contextual representations of words that are learned on
-large corpora via unsupervised language modelling objective
+large corpora via unsupervised language modeling objective
 \cite{peters18ELMO}. Large performance gains are obtained
 by fine-tuning these models on particular tasks after
 unsupervised pretraining \cite{radford18fineTuning,
@@ -118,11 +119,32 @@ unsupervised pretraining and task specific fine-tuning
 showed that language models can be applied to a variety of
 tasks without task specific fine tuning. This is demonstrated on a much larger scale by \newcite{brown20GPT3}. 
 
-% \enote{hs}{intro up to here: can probably be cut (a little bit too detailed about stuff everybody knows)}
+% \enote{hs}{intro up to here: can probably be cut (a little
+% bit too detailed about stuff everybody knows)}
 
-Despite the performance improvements on downstream tasks
-provided by the distributed representations and deep neural
-models, what they actually learn about language and word meaning  is not clear due to their uninterpretable nature. For static word embeddings, researchers used word similarity \cite{hill15simlex} and word analogy \cite{gladkova16analogy} tests to shed light on what information is captured in these dense vector spaces. For language models, a great amount of linguistic knowledge is stored in the model parameters \cite{peters18dissecting}.  Several studies proposed using `fill in the blank' type cloze statements to test the knowledge learned by these models during unsupervised pretraining. \newcite{petroni19LMasKB} proposed the LAMA (LAnguage Model Analysis) probe to test the factual and common sense knowledge stored in a language model. A similar approach is used in \cite{Schick20rareWords} where authors introduced WNLaMPro (WordNet Language Model Probing) in order to assess the ability of language models to understand words based on their frequency. In WNLaMPro, cloze style questions are generated based on antonym, hypernym and cohyponym relations among words extracted from WordNet along with word corruptions.
+Deep models improve performance. However,
+what they actually learn about language and word meaning  is
+still to a large extent unclear due to their uninterpretable
+nature. For static word embeddings, researchers used word
+similarity \cite{hill15simlex} and word analogy
+\cite{gladkova16analogy} tests to shed light on what
+information is captured in these dense vector spaces. For
+language models, a great amount of linguistic knowledge is
+stored in the model parameters \cite{peters18dissecting}.
+Several studies proposed using `fill in the blank' type
+cloze statements to test  knowledge learned by these models
+during unsupervised pretraining. \newcite{petroni19LMasKB}
+proposed the LAMA (LAnguage Model Analysis) probe to test
+the factual and common sense knowledge stored in  language
+models.
+Similarly, \citet{Schick20rareWords} introduced WNLaMPro
+(WordNet Language Model Probing)  to assess the ability of
+language models to understand words based on their
+frequency. In WNLaMPro, cloze style questions are generated
+based on antonym, hypernym and cohyponym relations among
+words extracted from WordNet.
+
+%along with word corruptions.
 
 The existing probing datasets mainly focus on investigating
 the knowledge about relations between words or
@@ -132,33 +154,34 @@ use its dictionary definition. If a pretrained
 language model truly understands the meaning of a word, then
 it should be able to
 match a word with its dictionary definition. 
-Based on this motivation, in
-this study we introduce the \textit{Word Definitions Language
+Based on this motivation, we introduce the \textit{Word Definitions Language
   Model Probing} (WDLMPro) dataset; it is a challenging
 benchmark for testing NLP models for their ability to
 understand words.
 WDLMPro is essentially a set of
 thousands of synset groups; each synset group consists
-of a target word (with definition) and its taxonomic sisters
-(each with its definition) that have some similarity to the target.
+of a target word (with its definition) and its taxonomic sisters
+(with their definition) that have some similarity to the target.
 We evaluate two masked language models, BERT and
 RoBERTa, and the auto-regressive model GPT-2 on WDLMPro using two different probing tests.
 We find that all three models have great difficulty matching
 words and their definitions, implying a poor understanding
 of word meaning.
-
+This is an important result that could
+help guide research on LMs in the future.
 % \enote{hs}{we could be more specific about the two different
 %   tasks here if there is space:
 % }
 
 \section{WDLMPro}
-We introduce  WDLMPro (Word Definitions Language Model
-Probing) to test how well NLP models can match
+In this section,
+we introduce  WDLMPro (Word Definitions Language Model
+Probing), a dataset to test how well NLP models can match
 nouns and verbs with  their
 definitions.
 We view this as a test of how well the models understand lexical meaning.
-In this section, we
-present a detailed description of WDLMPro.
+%In this section, we
+%present a detailed description of WDLMPro.
 
 \subsection{Dataset}
 WordNet \cite{miller95wordnet} is the basis for
@@ -243,7 +266,7 @@ the language model has to predict.}
     %  exsert.v.01 & thrust or extend out \\ \hline
    
     \end{tabular}
-    \caption{Sample candidates for the synset group with target \emph{a\_cappella\_singing.n.01} and their corresponding definitions.} 
+    \caption{Five candidates of ${\cal G}(t)$ for $t$=  \emph{a\_cappella\_singing.n.01} and their definitions} 
     \label{tab:dataset_samples}
 \end{table*}
 
@@ -312,7 +335,7 @@ the string ``miscalculation'' (``warm
 up'').
 
 Table \ref{tab:patterns} shows that we define different templates for masked and autoregressive language models.
-For the masked language models, we average the prediction scores accross patterns before ranking the candidates.
+For the masked language models, we average the prediction scores across patterns before ranking the candidates.
 % We define alternatives (e.g., ``definition of \underline{\hspace{3mm}}'', ``definition of a \underline{\hspace{3mm}}'', ``definition of an \underline{\hspace{3mm}}'') and will then use, for each word, the alternative that gives the best result. 
 % This allows us to generate  WDLMPro automatically as opposed to having to manually postedit a large dataset.
 % This is justified because we are interested in how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
@@ -327,8 +350,10 @@ For the masked language models, we average the prediction scores accross pattern
 %   both cases}
 % \enote{ks}{Is it formal enough with the equations?} 
   
-In this study, we focus on masked  and
-autoregressive language models. For a masked language model
+%In this study, we focus on masked  and
+%autoregressive language models.
+
+For a masked language model (MLM)
 $M$, the probability of a candidate $c \in {\cal G}(t)$ on W2D  is calculated as:
 \begin{equation*}
   P\uprm{W2D}{M} (c|t) = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|Q(c,|\bm{t}|))
@@ -339,7 +364,7 @@ input query
 created from one of the patterns (Table \ref{tab:patterns})
 with \underline{\hspace{3mm}} replaced with
 $|\bm{t}|$ consecutive mask tokens. For an autoregressive
-language model $A$, we
+language model (ALM) $A$, we
 decompose $P(\bm{t}^i|Q(c),\bm{t})$ in the standard way:
 \begin{equation*}
     P\uprm{W2D}{A} = \prod_{i=1}^{|\bm{t}|}P(\bm{t}^i|Q(c),\bm{t}^{1},...,\bm{t}^{i-1})
@@ -349,7 +374,7 @@ For D2W, we need to compare, given a definition, the probabilities of
 different candidate words that are generally of different lengths.
 To ensure a fair comparison,
 we follow
-\newcite{Xiong20Encyclopedia}. For masked language models, we
+\newcite{Xiong20Encyclopedia}. For MLMs, we
 match the number of mask tokens in an input query to the
 token count of each candidate. The final score is the average log-probability of the masked tokens:
 \begin{equation*}
@@ -357,7 +382,7 @@ token count of each candidate. The final score is the average log-probability of
     \frac{1}{|\bm{c}|}\sum_{i=1}^{|\bm{c}|}\log P(\bm{c}^i |
     Q(t,|\bm{c}|))
 \end{equation*}
-For autoregressive models, we use the probability of only
+For ALMs, we use the probability of
 the first token:
 \begin{equation*}
     P\uprm{D2W}{A}(c|t) =
@@ -370,19 +395,22 @@ are often easily predictable from the first token.
 %for each candidataae since the generation of further tokens will depend on the previously generated tokens, preventing a fair comparison between candidates with different token counts:
 
 We apply our probing test to two different pretrained
-masked language models (BERT and
-RoBERTa) and one autoregressive language model
+MLMs (BERT and
+RoBERTa) and one ALM
 (GPT-2). 
-In order to investigate the effect of model
+To investigate the effect of model
 size on the performance, we experiment with both
 base and large versions of BERT and RoBERTa
 along with all four sizes of GPT-2 (small, medium,
 large, xl). 
 For RoBERTa, we capitalize the first letter of the candidate
-noun word since pretrained RoBERTa models are case sensitive
+noun  since pretrained RoBERTa models are case sensitive
 and expect a capital letter at the beginning of a
-sentence.\footnote{Not using capitalization  resulted in
-  poor performance for single token target words for D2W.}
+sentence.
+
+% restore if paper is accepted
+%\footnote{Not using capitalization  resulted in
+%  poor performance for single token target words for D2W.}
 
 \subsection{Measures}
 We use two measures: precision at 1 (P@1) and a rank score
@@ -411,11 +439,13 @@ results for
 BERT, RoBERTa and GPT-2. Performance is clearly better than the
 random baseline.
 Larger models perform generally better than smaller
-ones and RoBERTa consistently outperforms BERT in both tasks as expected. For W2D,
-best performance is achieved by GPT-2$^{xl}$  for 
-nouns (45.1\% P@1, 0.80 RS) and by RoBERTa large
-for  verbs (48.0\% P@1, 0.84 RS). Performance on D2W is much lower than for W2D for all models. For nouns, RoBERTa large and GPT-2$^{xl}$ perform similarly (28.1\% and 27.1 \%P@1, 0.69 and 0.71 RS, respectively) while RoBERTa large achieves the best results for verbs (39.3\% P@1, 0.79 RS).
-Poor performance on D2W compared to W2D might be due to language models' ability to distinguish different definitions better than individiual words since definitions are more informative and definitive than individiual words. 
+ones and RoBERTa consistently outperforms BERT.
+%in both tasks as expected.
+For W2D,
+best performance is achieved by GPT-2$_{xl}$  for 
+nouns (45.1 P@1, 0.80 RS) and by RoBERTa large
+for  verbs (48.0 P@1, 0.84 RS). Performance on D2W is much lower than for W2D for all models. For nouns, RoBERTa large and GPT-2$_{xl}$ perform similarly (28.1 and 27.1 P@1, 0.69 and 0.71 RS) while RoBERTa large achieves the best results for verbs (39.3 P@1, 0.79 RS).
+Poor performance on D2W compared to W2D might be due to language models' ability to distinguish different definitions better than individiual words since definitions are more informative  than individual words. 
 
 \enote{KS}{Does the above argument make sense? I thought it can be beneficial to discuss the significant performance difference between W2D and D2W which are intuitively at the same (or similar) difficulty level. Another possible reason might be the different scoring we use for ranking candidates, but I believe this might not sounds so nice. }
 
@@ -436,7 +466,7 @@ Poor performance on D2W compared to W2D might be due to language models' ability
      Random & 7.6 & 0.50 & 7.8 & 0.50 \\\hline
      
     \end{tabular}
-    \caption{P@1 and rank scores on W2D}
+    \caption{P@1 and rank score (RS) on W2D}
     \label{tab:results_W2D}
 \end{table}
 
@@ -458,19 +488,52 @@ Poor performance on D2W compared to W2D might be due to language models' ability
      Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
      
     \end{tabular}
-    \caption{P@1 and rank scores on D2W}
+    \caption{P@1 and rank score (RS) on D2W}
     \label{tab:results_D2W}
 \end{table}
 
 
 We also investigate the effect of frequency on the models' understanding of word meaning.
-To this end, we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the corpora the models were trained on.
+To this end, we stratify words into \textit{rare} (fewer
+than 10 occurrences), \textit{medium} (10 to 99 occurrences)
+and \textit{frequent} (100 or more occurrences), based on
+occurrences in WWC\footnote{Targets that have more than 3
+  tokens (based on NLTK tokenization) are taken as rare
+  without counting.} (Westbury Wikipedia Corpus,
+\newcite{WWC}), where we use WWC frequency as a substitute
+for the models' training
+corpora. 
 
 We focus on nouns since most verbs in our dataset are relatively frequent. 
-Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words (See appendix for D2W results). 
-Moreover, even for frequent words, P@1 is below 50\% (except GPT-2$_{xl}$ which gives 50.5\%). 
+Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words. (See appendix for D2W results.) 
+Even for frequent words, P@1 is never above 50.5.
 
-We investigate the predictions of the GPT-2$_{xl}$ model for the medium frequency verb `beckon' and frequent noun `roleplaying' on W2D task. The model matches the word `beckon' to definition `signal by winking', while the target definition is `signal with the hands or nod'. This shows that GPT-2$_{xl}$ is able to understand that `beckon' is a type of signaling but it fails to learn the specific type. Similarly, it matches the noun `roleplaying' to definition `acting the part of a character on stage' while target definition is `acting a particular role (as in psychotherapy)' failing to understand what type of acting the word refers to. These results demonstrate that even large and sophisticated language models fail to fully understand the meaning of many words. 
+\textbf{Analysis.}
+The correct definition of the medium
+frequency verb `beckon'
+is 
+`signal
+with the hands or nod'.
+GPT-2$_{xl}$ predicts 
+`signal by winking'.
+The correct definition of the
+frequent noun `roleplaying' 
+is `acting a particular role (as in psychotherapy)'
+GPT-2$_{xl}$ predicts 
+`acting the part of a
+character on stage'.
+So GPT-2$_{xl}$ 
+understands that beckoning is signaling and that
+roleplaying is acting, but 
+it has not learned to distinguish between different types of
+signaling and acting.
+This points to an important future goal for
+LMs: they should be developed to gain an understanding of
+words that goes beyond the current superficial state of the art.
+
+
+
+
 
 
 \begin{table}
@@ -497,17 +560,16 @@ We investigate the predictions of the GPT-2$_{xl}$ model for the medium frequenc
 
 \section{Conclusion}
 We introduced
-WDLMPro (Word Definitions Language Model
-Probing),
+WDLMPro,
 a
-probing tests that helps us analyze  how well a model
-understands word meaning. This is complementary to existing
-probing tests that investigate the knowledge of
-relations between words or entities.
-WDLMPro is based on WordNet word definitions.
+probing test that helps  analyze  how well a model
+understands word meaning. WDLMPro is complementary to existing
+probing tests that are about
+\emph{relations} between words or entities.
+%WDLMPro is based on WordNet word definitions.
 We evaluated three popular pretrained language
 models on the W2D (word to definition) and D2W (definition
-to word) tasks that we define in WDLMPro. Our findings show
+to word) tasks. Our findings show
 that, despite their remarkable performance on many
 downstream tasks, these models struggle to match a word and
 its true definition, suggesting an insufficient

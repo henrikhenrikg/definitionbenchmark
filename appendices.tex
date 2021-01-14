@@ -1,0 +1,51 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{eacl2021}
+\usepackage{float}
+
+\begin{document}
+
+\appendix
+\section{Appendices}
+\label{sec:appendix}
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l|rrrr}
+    \hline
+        \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
+     Bert$_{b}$ & 14.7 & 20.6 & 28.7 & 23.7 \\
+     Bert$_{l}$ & 12.0 & 20.1 & 33.1 & 25.4\\
+     Roberta$_{b}$ & 17.7 & 24.2 & 29.5 & 25.7 \\
+     Roberta$_{l}$ & 17.9 & 25.8 & 34.5 & 28.8 \\ \hline
+     GPT-2$_{s}$ & 17.3 & 20.7 & 26.7 & 23.2 \\
+     GPT-2$_{m}$ & 17.0 & 21.1 & 30.6 & 25.3 \\
+     GPT-2$_{l}$ & 19.2 & 24.3 & 33.9 & 28.4 \\
+     GPT-2$_{xl}$ & 19.3 & 24.8 & 36.3 & 29.8 \\ \hline
+     Random & 6.7 & 7.1 & 8.3 & 7.6 \\ \hline 
+     
+    \end{tabular}
+    \caption{P@1 scores on D2W for nouns based on target word frequency.}
+    \label{tab:freq_results_D2W}
+\end{table}
+
+\begin{table*}
+    \centering
+    \begin{tabular}{l|l}
+    \hline
+    \textbf{synset} & \textbf{definition} \\ \hline
+     \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
+     applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
+     bow.v.01 & bend one's knee or body, or lower one's head \\
+     shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
+     exsert.v.01 & thrust or extend out \\
+     wink.v.01 & signal by winking \\
+     nod.v.01 & express or signify by nodding \\\hline
+   
+    \end{tabular}
+    \caption{Seven candidates of ${\cal G}(t)$ for $t$=  \emph{beckon.v.01} and their definitions} 
+    \label{tab:dataset_samples}
+\end{table*}
+
+
+\end{document}

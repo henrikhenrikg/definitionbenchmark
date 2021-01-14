@@ -458,27 +458,27 @@ Poor performance on D2W compared to W2D might be due to language models' ability
 \end{table}
 
 
-\begin{table}
-    \centering
-    \begin{tabular}{l|rrrr}
-        \hline
-         \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
-         & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-     Bert$_{b}$ & 23.7 & 0.65 & 19.3 & 0.65 \\
-     Bert$_{l}$ & 25.4 & 0.65 & 19.3 & 0.65 \\
-     Roberta$_{b}$ & 25.7 & 0.67 & 32.6 & 0.74 \\
-     Roberta$_{l}$ & 28.8 & 0.70 & 38.6 & 0.80 \\ \hline
-     GPT-2$_{s}$ & 23.2 & 0.68 & 29.2 & 0.71 \\
-     GPT-2$_{m}$ & 25.3 & 0.70 & 27.8 & 0.72 \\
-     GPT-2$_{l}$ & 28.4 & 0.72 & 31.5 & 0.74 \\
-     GPT-2$_{xl}$ & 29.8 & 0.73 & 32.8 & 0.76 \\ \hline 
-     fastText & 16.5 & 0.63 & 20.3 & 0.69 \\ \hline 
-     Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
+% \begin{table}
+%     \centering
+%     \begin{tabular}{l|rrrr}
+%         \hline
+%          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
+%          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
+%      Bert$_{b}$ & 23.7 & 0.65 & 19.3 & 0.65 \\
+%      Bert$_{l}$ & 25.4 & 0.65 & 19.3 & 0.65 \\
+%      Roberta$_{b}$ & 25.7 & 0.67 & 32.6 & 0.74 \\
+%      Roberta$_{l}$ & 28.8 & 0.70 & 38.6 & 0.80 \\ \hline
+%      GPT-2$_{s}$ & 23.2 & 0.68 & 29.2 & 0.71 \\
+%      GPT-2$_{m}$ & 25.3 & 0.70 & 27.8 & 0.72 \\
+%      GPT-2$_{l}$ & 28.4 & 0.72 & 31.5 & 0.74 \\
+%      GPT-2$_{xl}$ & 29.8 & 0.73 & 32.8 & 0.76 \\ \hline 
+%      fastText & 16.5 & 0.63 & 20.3 & 0.69 \\ \hline 
+%      Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
      
-    \end{tabular}
-    \caption{P@1 and rank score (RS) on D2W}
-    \label{tab:results_D2W}
-\end{table}
+%     \end{tabular}
+%     \caption{P@1 and rank score (RS) on D2W}
+%     \label{tab:results_D2W}
+% \end{table}
 
 We investigate the effect of frequency on the models' understanding of word meaning.
 To this end, we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 

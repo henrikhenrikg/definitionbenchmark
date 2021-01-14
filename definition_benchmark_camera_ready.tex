@@ -39,6 +39,8 @@
 % smaller than 5cm (the original size); we will check this
 % in the camera-ready version and ask you to change it back.
 
+\usepackage{xcolor}
+
 \newcommand\BibTeX{B\textsc{ib}\TeX}
 
 \title{%What Does it Mean? 
@@ -82,8 +84,9 @@ what kind of knowledge is acquired,
 language models are commonly probed by querying them with
 `fill in the blank' style cloze questions. Existing probing
 datasets mainly focus on knowledge about \emph{relations between}
-words and entities. We introduce WDLMPro (Word Definitions
-Language Model Probing) to \emph{evaluate word understanding
+words and entities. We introduce WDLMPro
+%\footnote{WDLMPro and the evaluation scripts are available at https://github.com/lksenel/definition_benchmark} 
+(Word Definitions Language Model Probing) to \emph{evaluate word understanding
   directly} using dictionary definitions of
 words. In our experiments, three popular pretrained
 language models
@@ -146,7 +149,41 @@ frequency. In WNLaMPro, cloze style questions are generated
 based on antonym, hypernym and cohyponym relations among
 words extracted from WordNet.
 
-%along with word corruptions.
+
+\begin{table*}
+    \centering
+    \begin{tabular}{l|l}
+    \hline
+    \textbf{synset} & \textbf{definition} \\ \hline
+    \emph{a\_cappella\_singing.n.01} & \emph{singing without instrumental accompaniment} \\
+     caroling.n.01 & singing joyful religious songs (especially at Christmas) \\
+     crooning.n.01 & singing in a soft low tone \\
+     singalong.n.01 & informal group singing of popular songs \\
+     bel\_canto.n.01 & a style of operatic singing \\ \hline
+    %  \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
+    %  applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
+    %  bow.v.01 & bend one's knee or body, or lower one's head \\
+    %  shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
+    %  exsert.v.01 & thrust or extend out \\ \hline
+   
+    \end{tabular}
+    \caption{Five candidates of ${\cal G}(t)$ for $t$=  \emph{a\_cappella\_singing.n.01} and their definitions} 
+    \label{tab:dataset_samples}
+\end{table*}
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|cc}
+    \hline
+         & \textbf{Noun} & \textbf{Verb} \\ \hline
+         \textbf{\# of Synset Groups} & 51260 & 8487 \\
+         \textbf{Average \# of Candidates} & 50.2 & 47.7 \\
+         \textbf{min / max \# of Candidates} & 5 / 404 & 5 / 593 \\ \hline
+    \end{tabular}
+    \caption{WDLMPro statistics}
+    \label{tab:dataset_stats}
+\end{table}
 
 The existing probing datasets mainly focus on investigating
 the knowledge about relations between words or
@@ -163,18 +200,14 @@ understand words.
 WDLMPro is essentially a set of
 thousands of synset groups; each synset group consists
 of a target word (with its definition) and its taxonomic sisters
-(with their definition) that have some similarity to the target.
+(with their definition) that have some similarity to the target. \textcolor{blue}{ Using taxonomic sisters, rather than random word groups, makes the task significantly more challenging for statistical models that are based on distributional hypothesis since these words tend to have similar distributional characteristics \cite{lenci08distributional}. }
 We evaluate two masked language models, BERT and
-RoBERTa, and the auto-regressive model GPT-2 on WDLMPro using two different probing tests.
-We find that all three models have great difficulty matching
+RoBERTa, and the auto-regressive model GPT-2 on WDLMPro using two different probing tests\textcolor{blue}{: (i) match definition to word (D2W) (ii) match word to definition (W2D). We also provide a baseline using static fastText embeddings \cite{mikolov18fastText}.}
+We find that all three language models \textcolor{blue}{perform significantly better than the baseline. Nevertheless, they} have great difficulty matching
 words and their definitions, implying a poor understanding
 of word meaning.
 This is an important result that could
 help guide research on LMs in the future.
-% \enote{hs}{we could be more specific about the two different
-%   tasks here if there is space:
-% }
-
 
 \section{WDLMPro}
 In this section,
@@ -210,6 +243,7 @@ set up the WDLMPro tasks that require matching of words and definitions.
 We discard groups ${\cal G}(t)$ that
 have a size of less than 5.
 
+
 In this study, we focus on nouns and verbs, i.e., we create
 synset groups ${\cal G}$ for the nouns and verbs in WordNet.
 Table
@@ -219,65 +253,8 @@ and their definitions
 for the target
 \emph{a\_cappella\_singing.n.01}. (see appendix for the target \emph{beckon.v.01}.)
 Table \ref{tab:dataset_stats} shows statistics of the dataset.
- 
- 
-\begin{table}
-\centering
-\begin{tabular}{ll}
-\multicolumn{2}{c}{\textbf{Masked Language Model (MLM)}} \\\hline
-\multirow{3}{*}{\textbf{Noun}} & \underline{\hspace{3mm}} is \texttt{<DEF>} \\
- & \underline{\hspace{3mm}} means \texttt{<DEF>}  \\% \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
-& \underline{\hspace{3mm}} is defined as \texttt{<DEF>} \\\hline
- \multirow{2}{*}{\textbf{Verb}} & definition of \underline{\hspace{3mm}} is to \texttt{<DEF>} \\
- & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}}  \\ \hline\hline
- \multicolumn{2}{c}{\textbf{Autoregressive Language Model (ALM)}}\\ \hline
-\multirow{1}{*}{\textbf{Noun}} & \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
-  \hline %\texttt{<DEF>} is the definition of an
- %\underline{\hspace{3mm}}\\ \hline
- \multirow{1}{*}{\textbf{Verb}} & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
-\end{tabular}
-\caption{Patterns used for querying language models for
-  nouns and verbs.
-\texttt{<DEF>} refers to the definition,
-\underline{\hspace{3mm}} is the mask or missing word that
-the language model has to predict.}
-\label{tab:patterns}
-\end{table}
+  
 
-\begin{table*}
-    \centering
-    \begin{tabular}{l|l}
-    \hline
-    \textbf{synset} & \textbf{definition} \\ \hline
-    \emph{a\_cappella\_singing.n.01} & \emph{singing without instrumental accompaniment} \\
-     caroling.n.01 & singing joyful religious songs (especially at Christmas) \\
-     crooning.n.01 & singing in a soft low tone \\
-     singalong.n.01 & informal group singing of popular songs \\
-     bel\_canto.n.01 & a style of operatic singing \\ \hline
-    %  \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
-    %  applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
-    %  bow.v.01 & bend one's knee or body, or lower one's head \\
-    %  shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
-    %  exsert.v.01 & thrust or extend out \\ \hline
-   
-    \end{tabular}
-    \caption{Five candidates of ${\cal G}(t)$ for $t$=  \emph{a\_cappella\_singing.n.01} and their definitions} 
-    \label{tab:dataset_samples}
-\end{table*}
-
-
-\begin{table}
-    \centering
-    \begin{tabular}{l|cc}
-    \hline
-         & \textbf{Noun} & \textbf{Verb} \\ \hline
-         \textbf{\# of Synset Groups} & 51559 & 8602 \\
-         \textbf{Average \# of Candidates} & 50.2 & 47.7 \\
-         \textbf{min / max \# of Candidates} & 5 / 404 & 5 / 593 \\ \hline
-    \end{tabular}
-    \caption{WDLMPro statistics}
-    \label{tab:dataset_stats}
-\end{table}
 
 \subsection{Probing Tests}
 
@@ -330,12 +307,30 @@ up''.
 
 Table \ref{tab:patterns} shows that we define different templates for masked and autoregressive language models.
 For the masked language models, we average the prediction scores across patterns before ranking the candidates.
-% We define alternatives (e.g., ``definition of \underline{\hspace{3mm}}'', ``definition of a \underline{\hspace{3mm}}'', ``definition of an \underline{\hspace{3mm}}'') and will then use, for each word, the alternative that gives the best result. 
-% This allows us to generate  WDLMPro automatically as opposed to having to manually postedit a large dataset.
-% This is justified because we are interested in how well the model understands the word, not the pattern (cf.\  \newcite{Schick20rareWords}). 
 
-% \enote{hs}{the following should be more formal -- we can
-%   probably use Timo's notation}
+
+\begin{table}
+\centering
+\begin{tabular}{ll}
+\multicolumn{2}{c}{\textbf{Masked Language Model (MLM)}} \\\hline
+\multirow{3}{*}{\textbf{Noun}} & \underline{\hspace{3mm}} is \texttt{<DEF>} \\
+ & \underline{\hspace{3mm}} means \texttt{<DEF>}  \\% \texttt{<DEF>} is the definition of a \underline{\hspace{3mm}} \\
+& \underline{\hspace{3mm}} is defined as \texttt{<DEF>} \\\hline
+ \multirow{2}{*}{\textbf{Verb}} & definition of \underline{\hspace{3mm}} is to \texttt{<DEF>} \\
+ & to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}}  \\ \hline\hline
+ \multicolumn{2}{c}{\textbf{Autoregressive Language Model (ALM)}}\\ \hline
+\multirow{1}{*}{\textbf{Noun}} & \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
+  \hline %\texttt{<DEF>} is the definition of an
+ %\underline{\hspace{3mm}}\\ \hline
+ \multirow{1}{*}{\textbf{Verb}} &   to \texttt{<DEF>} is the definition of \underline{\hspace{3mm}} \\
+\end{tabular}
+\caption{Patterns used for querying language models for
+  nouns and verbs.
+\texttt{<DEF>} refers to the definition,
+\underline{\hspace{3mm}} is the mask or missing word that
+the language model has to predict.}
+\label{tab:patterns}
+\end{table}
 
 
 \subsection{Baselines}
@@ -398,13 +393,12 @@ base and large versions of BERT and RoBERTa
 along with all four sizes of GPT-2 (small, medium,
 large, xl). 
 For RoBERTa, we capitalize the first letter of the candidate
-noun  since pretrained RoBERTa models are case sensitive
+noun since pretrained RoBERTa models are case sensitive
 and expect a capital letter at the beginning of a
-sentence.
+sentence\footnote{Not using capitalization resulted in poor performance for single token target words for D2W.}.
 
-% restore if paper is accepted
-%\footnote{Not using capitalization  resulted in
-%  poor performance for single token target words for D2W.}
+\textcolor{blue}{In addition to the deep contextual language models, we also provide a baseline using fastText static word embeddings\footnote{We use `crawl-300d-2M-subword' model from https://fasttext.cc/docs/en/english-vectors.html} \cite{mikolov18fastText}. For fastText embeddings, we tokenize the candidates and their definitions using NLTK tokenizer and represent them with their average vector. We rank candidates based on their cosine similarity to target embedding. }
+%
 
 \subsection{Measures}
 We use two measures: precision at 1 (P@1) and a rank score
@@ -430,18 +424,15 @@ Tables \ref{tab:results_W2D} and
 \ref{tab:results_D2W} present
 W2D and D2W
 results for
-BERT, RoBERTa and GPT-2. Performance is clearly better than the
-random baseline.
+BERT, RoBERTa and GPT-2 \textcolor{blue}{along with fastText and random baselines. Language models perform clearly better than both baselines.}
 Larger models perform generally better than smaller
 ones and RoBERTa consistently outperforms BERT.
-%in both tasks as expected.
-For W2D,
-best performance is achieved by GPT-2$_{xl}$  for 
-nouns (45.1 P@1, 0.80 RS) and by RoBERTa large
-for  verbs (48.0 P@1, 0.84 RS). Performance on D2W is much lower than for W2D for all models. For nouns, RoBERTa large and GPT-2$_{xl}$ perform similarly (28.1 and 27.1 P@1, 0.69 and 0.71 RS) while RoBERTa large achieves the best results for verbs (39.3 P@1, 0.79 RS).
+\textcolor{blue}{This might be an indication for the correlation between performance on WDLAMPro and downstream performance. However, further investigation is necessary to show the correlation more clearly.}
+For W2D, best performance is achieved by GPT-2$_{xl}$  for nouns (47.3 P@1, 0.81 RS) and by RoBERTa large for  verbs (50.8 P@1, 0.84 RS). 
+Performance on D2W is much lower than for W2D for all models. 
+For nouns, RoBERTa large and GPT-2$_{xl}$ perform similarly (28.8 and 29.8 P@1, 0.70 and 0.73 RS) while RoBERTa large achieves the best results for verbs (38.6 P@1, 0.80 RS).
 Poor performance on D2W compared to W2D might be due to language models' ability to distinguish different definitions better than individual words since definitions are more informative  than individual words. 
-
-\enote{KS}{Does the above argument make sense? I thought it can be beneficial to discuss the significant performance difference between W2D and D2W which are intuitively at the same (or similar) difficulty level. Another possible reason might be the different scoring we use for ranking candidates, but I believe this might not sound so nice. }
+\textcolor{blue}{Overall GPT-2 models perform better than masked language models (with the exception of Roberta large for verbs), despite using a single pattern as opposed to the multiple patterns used by masked language models. This might indicate that ALM objective is better at learning word meaning than MLM objective. }
 
 \begin{table}
     \centering
@@ -449,14 +440,16 @@ Poor performance on D2W compared to W2D might be due to language models' ability
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-     Bert$_{b}$ & 34.0 & 0.73 & 33.3 & 0.73 \\
-     Bert$_{l}$ & 34.0 & 0.73 & 31.7 & 0.72 \\
-     Roberta$_{b}$ & 36.3 & 0.75 & 40.6 & 0.79 \\
-     Roberta$_{l}$ & 40.9 & 0.78 & 48.0 & 0.84 \\ \hline
-     GPT-2$_{s}$ & 37.3 & 0.75 & 43.0 & 0.80 \\
-     GPT-2$_{m}$ & 39.5 & 0.77 & 42.3 & 0.80 \\
-     GPT-2$_{l}$ & 44.0 & 0.79 & 46.7 & 0.83 \\
-     GPT-2$_{xl}$ & 45.1 & 0.80 & 47.0 & 0.83 \\ \hline 
+     Bert$_{b}$ & 35.2 & 0.74 & 35.3 & 0.74 \\
+     Bert$_{l}$ & 35.1 & 0.73 & 33.6 & 0.73 \\
+     Roberta$_{b}$ & 37.1 & 0.75 & 42.7 & 0.79 \\
+     Roberta$_{l}$ & 42.1 & 0.78 & 50.8 & 0.84 \\ \hline
+     GPT-2$_{s}$ & 38.7 & 0.76 & 45.0 & 0.80 \\
+     GPT-2$_{m}$ & 41.8 & 0.77 & 43.6 & 0.80 \\
+     GPT-2$_{l}$ & 45.7 & 0.80 & 48.4 & 0.83 \\
+     GPT-2$_{xl}$ & 47.3 & 0.81 & 48.6 & 0.83 \\
+     \hline 
+     fastText & 22.5 & 0.66 & 29.1 & 0.69 \\ \hline 
      Random & 7.6 & 0.50 & 7.8 & 0.50 \\\hline
      
     \end{tabular}
@@ -471,14 +464,15 @@ Poor performance on D2W compared to W2D might be due to language models' ability
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-     Bert$_{b}$ & 23.1 & 0.65 & 19.0 & 0.65 \\
-     Bert$_{l}$ & 24.8 & 0.65 & 19.0 & 0.65 \\
-     Roberta$_{b}$ & 25.2 & 0.67 & 29.7 & 0.73 \\
-     Roberta$_{l}$ & 28.1 & 0.69 & 39.3 & 0.79 \\ \hline
-     GPT-2$_{s}$ & 21.2 & 0.66 & 27.7 & 0.69 \\
-     GPT-2$_{m}$ & 22.6 & 0.68 & 24.8 & 0.69 \\
-     GPT-2$_{l}$ & 25.9 & 0.70 & 29.0 & 0.72 \\
-     GPT-2$_{xl}$ & 27.1 & 0.71 & 30.3 & 0.73 \\ \hline 
+     Bert$_{b}$ & 23.7 & 0.65 & 19.3 & 0.65 \\
+     Bert$_{l}$ & 25.4 & 0.65 & 19.3 & 0.65 \\
+     Roberta$_{b}$ & 25.7 & 0.67 & 32.6 & 0.74 \\
+     Roberta$_{l}$ & 28.8 & 0.70 & 38.6 & 0.80 \\ \hline
+     GPT-2$_{s}$ & 23.2 & 0.68 & 29.2 & 0.71 \\
+     GPT-2$_{m}$ & 25.3 & 0.70 & 27.8 & 0.72 \\
+     GPT-2$_{l}$ & 28.4 & 0.72 & 31.5 & 0.74 \\
+     GPT-2$_{xl}$ & 29.8 & 0.73 & 32.8 & 0.76 \\ \hline 
+     fastText & 16.5 & 0.63 & 20.3 & 0.69 \\ \hline 
      Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
      
     \end{tabular}
@@ -486,47 +480,58 @@ Poor performance on D2W compared to W2D might be due to language models' ability
     \label{tab:results_D2W}
 \end{table}
 
-
-We also investigate the effect of frequency on the models' understanding of word meaning.
-To this end, we stratify words into \textit{rare} (fewer
-than 10 occurrences), \textit{medium} (10 to 99 occurrences)
-and \textit{frequent} (100 or more occurrences), based on
-occurrences in WWC\footnote{Targets that have more than 3
-  tokens (based on NLTK tokenization) are taken as rare
-  without counting.} (Westbury Wikipedia Corpus,
-\newcite{WWC}), where we use WWC frequency as a substitute
-for the models' training
-corpora. 
-
+We investigate the effect of frequency on the models' understanding of word meaning.
+To this end, we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 
 We focus on nouns since most verbs in our dataset are relatively frequent. 
 Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words. (See appendix for D2W results.) 
-Even for frequent words, P@1 is never above 50.5.
+Even for frequent words, P@1 is never above 55.
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|rrrr}
+        \hline
+         \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
+         & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
+     Bert$_{b}$ & 23.7 & 0.65 & 19.3 & 0.65 \\
+     Bert$_{l}$ & 25.4 & 0.65 & 19.3 & 0.65 \\
+     Roberta$_{b}$ & 25.7 & 0.67 & 32.6 & 0.74 \\
+     Roberta$_{l}$ & 28.8 & 0.70 & 38.6 & 0.80 \\ \hline
+     GPT-2$_{s}$ & 23.2 & 0.68 & 29.2 & 0.71 \\
+     GPT-2$_{m}$ & 25.3 & 0.70 & 27.8 & 0.72 \\
+     GPT-2$_{l}$ & 28.4 & 0.72 & 31.5 & 0.74 \\
+     GPT-2$_{xl}$ & 29.8 & 0.73 & 32.8 & 0.76 \\ \hline 
+     fastText & 16.5 & 0.63 & 20.3 & 0.69 \\ \hline 
+     Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
+     
+    \end{tabular}
+    \caption{P@1 and rank score (RS) on D2W}
+    \label{tab:results_D2W}
+\end{table}
+
+\textcolor{blue}{We additionally break down the results based on the depths of the synsets in the WordNet hierarchy. Specifically, we investigate the performance of the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we take the depth of a sample (i.e., synset group) as the length of the shortest path from the target synset to the root synset (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth} displays the results for different depth ranges. Performance drops steadily as we go deeper in the hierarchy. Lower levels of WordNet hierarchy contain a many scientific terms and names of species such as types of cattle. These results suggest that even very large LMs lack the knowledge to distinguishing these terms.}
 
 \textbf{Analysis.}
-The correct definition of the medium
-frequency verb `beckon'
-is 
-`signal
-with the hands or nod'.
-GPT-2$_{xl}$ predicts 
-`signal by winking'.
-The correct definition of the
-frequent noun `roleplaying' 
-is `acting a particular role (as in psychotherapy)'
-GPT-2$_{xl}$ predicts 
-`acting the part of a
-character on stage'.
-So GPT-2$_{xl}$ 
-understands that beckoning is signaling and that
-roleplaying is acting, but 
-it has not learned to distinguish between different types of
-signaling and acting.
-This points to an important future goal for
-LMs: they should be developed to gain an understanding of
-words that goes beyond the current superficial state of the art.
+The correct definition of the medium frequency verb `beckon' is  `signal with the hands or nod'. GPT-2$_{xl}$ predicts  `signal by winking'.
+The correct definition of the frequent noun `roleplaying' is `acting a particular role (as in psychotherapy)' GPT-2$_{xl}$ predicts `acting the part of a character on stage'.
+So GPT-2$_{xl}$ understands that beckoning is signaling and that roleplaying is acting, but it has not learned to distinguish between different types of signaling and acting.
+This points to an important future goal for LMs: they should be developed to gain an understanding of words that goes beyond the current superficial state of the art.
 
 
-
+\begin{table}
+    \centering
+    \begin{tabular}{l|rrrr}
+        \hline
+         \textbf{Depth} & \textbf{\# of samp.} & \textbf{\# of cand.} & \textbf{RS} & \textbf{P@1} \\ \hline
+     3-5 & 2106 & 110 & 0.94 & 62.9 \\
+     6-8 & 25232 & 53 & 0.83 & 49.0 \\
+     9-11 & 18521 & 45 & 0.81 & 46.6 \\
+     12-14 & 4473 & 19 & 0.74 & 37.4 \\ 
+     15-19 & 928 & 13 & 0.67 & 31.5 \\ \hline
+     
+    \end{tabular}
+    \caption{RS and P@1 results for GPT-2$_{xl}$ model on W2D task for WordNet nouns based on the depth of the synset in WordNet hierarchy. \# of candidates, RS and P@1 are given as the average across all samples within the given depth range. }
+    \label{tab:WN_depth}
+\end{table}
 
 
 
@@ -535,14 +540,14 @@ words that goes beyond the current superficial state of the art.
     \begin{tabular}{l|rrrr}
     \hline
          \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
-     Bert$_{b}$ & 25.3 & 30.5 & 39.1 & 34.0 \\
-     Bert$_{l}$ & 22.7 & 29.1 & 40.6 & 34.0 \\
-     Roberta$_{b}$ & 30.2 & 34.2 & 39.6 & 36.3 \\
-     Roberta$_{l}$ & 32.3 & 37.5 & 45.8 & 40.9 \\ \hline
-     GPT-2$_{s}$ & 31.9 & 34.5 & 40.6 & 37.3 \\
-     GPT-2$_{m}$ & 32.6 & 35.6 & 44.0 & 39.5 \\
-     GPT-2$_{l}$ & 35.8 & 40.3 & 49.0 & 44.0 \\
-     GPT-2$_{xl}$ & 36.3 & 41.0 & 50.5 & 45.1 \\ \hline
+     Bert$_{b}$ & 26.0 & 31.1 & 40.7 & 35.2 \\
+     Bert$_{l}$ & 23.6 & 29.8 & 42.0 & 35.1 \\
+     Roberta$_{b}$ & 30.8 & 34.7 & 40.7 & 37.1 \\
+     Roberta$_{l}$ & 33.2 & 38.7 & 47.2 & 42.1 \\ \hline
+     GPT-2$_{s}$ & 32.9 & 35.2 & 42.6 & 38.7 \\
+     GPT-2$_{m}$ & 34.4 & 37.4 & 46.7 & 41.8 \\
+     GPT-2$_{l}$ & 37.0 & 41.4 & 51.1 & 45.7 \\
+     GPT-2$_{xl}$ & 37.7 & 42.7 & 53.3 & 47.3 \\ \hline
      Random & 6.6 & 7.0 & 8.2 & 7.6 \\ \hline 
      
     \end{tabular}
@@ -567,7 +572,9 @@ to word) tasks. Our findings show
 that, despite their remarkable performance on many
 downstream tasks, these models struggle to match a word and
 its true definition, suggesting an insufficient
-understanding of word meaning. WDLMPro provides an important
+understanding of word meaning.
+\textcolor{blue}{Relatively poor performance of these powerful models on WDLMPro might be seen as an argument for the limitations of the distributional systems and need for incorporating external knowledge.} 
+WDLMPro provides an important
 evaluation benchmark, encouraging design and training of
 models with precise word understanding.
 

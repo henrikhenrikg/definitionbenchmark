@@ -510,7 +510,6 @@ Even for frequent words, P@1 is never above 55.
     \label{tab:results_D2W}
 \end{table}
 
-<<<<<<< HEAD
 \textcolor{blue}{We additionally break down the results
   based on the depths of the synsets in the WordNet
   hierarchy. Specifically, we investigate the performance of
@@ -522,11 +521,9 @@ Even for frequent words, P@1 is never above 55.
   ranges. Performance drops steadily as we go deeper in the
   hierarchy. Lower levels of the WordNet hierarchy contain
   many scientific terms and names of species such as types
-  of cattle. These results suggest that even very large LMs
+  of cattle (e.g., \textit{cattalo},
+  \textit{hereford}, \textit{galloway}). These results suggest that even very large LMs
   lack the knowledge necessary to distinguish these terms.}
-=======
-\textcolor{blue}{We additionally break down the results based on the depths of the synsets in the WordNet hierarchy. Specifically, we investigate the performance of the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we take the depth of a sample (i.e., synset group) as the length of the shortest path from the target synset to the root synset (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth} displays the results for different depth ranges. Performance drops steadily as we go deeper in the hierarchy. Lower levels of WordNet hierarchy contain a many scientific terms and names of species such as types of cattle (e.g., \textit{cattalo}, \textit{hereford}, \textit{galloway}). These results suggest that LMs lack the knowledge to distinguishing these terms based on their definitions.}
->>>>>>> 650aff77c93cf1d872fa7ce317d270babafd4532
 
 \textbf{Analysis.}
 The correct definition of the medium frequency verb `beckon' is  `signal with the hands or nod'. GPT-2$_{xl}$ predicts  `signal by winking'.

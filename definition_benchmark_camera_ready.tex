@@ -44,8 +44,8 @@
 \newcommand\BibTeX{B\textsc{ib}\TeX}
 
 \title{%What Does it Mean? 
-Does He Wink or Does He Nod?
-A Challenging Benchmark for Evaluating Word Understanding of Language Models}
+% Does He Wink or Does He Nod?
+A Challenging Benchmark for Evaluating Word Understanding of Language Models based on Word Definitions}
 
 \author{Lutfi Kerem Senel \\
   Center for Information and Language Processing (CIS), LMU Munich, Germany \\
@@ -458,28 +458,6 @@ Poor performance on D2W compared to W2D might be due to language models' ability
 \end{table}
 
 
-% \begin{table}
-%     \centering
-%     \begin{tabular}{l|rrrr}
-%         \hline
-%          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{Noun}} & \multicolumn{2}{c}{\textbf{Verb}} \\
-%          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-%      Bert$_{b}$ & 23.7 & 0.65 & 19.3 & 0.65 \\
-%      Bert$_{l}$ & 25.4 & 0.65 & 19.3 & 0.65 \\
-%      Roberta$_{b}$ & 25.7 & 0.67 & 32.6 & 0.74 \\
-%      Roberta$_{l}$ & 28.8 & 0.70 & 38.6 & 0.80 \\ \hline
-%      GPT-2$_{s}$ & 23.2 & 0.68 & 29.2 & 0.71 \\
-%      GPT-2$_{m}$ & 25.3 & 0.70 & 27.8 & 0.72 \\
-%      GPT-2$_{l}$ & 28.4 & 0.72 & 31.5 & 0.74 \\
-%      GPT-2$_{xl}$ & 29.8 & 0.73 & 32.8 & 0.76 \\ \hline 
-%      fastText & 16.5 & 0.63 & 20.3 & 0.69 \\ \hline 
-%      Random & 7.6 & 0.50 & 8.0 & 0.50 \\\hline
-     
-%     \end{tabular}
-%     \caption{P@1 and rank score (RS) on D2W}
-%     \label{tab:results_D2W}
-% \end{table}
-
 We investigate the effect of frequency on the models' understanding of word meaning.
 To this end, we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 
 We focus on nouns since most verbs in our dataset are relatively frequent. 
@@ -508,7 +486,7 @@ Even for frequent words, P@1 is never above 55.
     \label{tab:results_D2W}
 \end{table}
 
-\textcolor{blue}{We additionally break down the results based on the depths of the synsets in the WordNet hierarchy. Specifically, we investigate the performance of the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we take the depth of a sample (i.e., synset group) as the length of the shortest path from the target synset to the root synset (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth} displays the results for different depth ranges. Performance drops steadily as we go deeper in the hierarchy. Lower levels of WordNet hierarchy contain a many scientific terms and names of species such as types of cattle. These results suggest that even very large LMs lack the knowledge to distinguishing these terms.}
+\textcolor{blue}{We additionally break down the results based on the depths of the synsets in the WordNet hierarchy. Specifically, we investigate the performance of the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we take the depth of a sample (i.e., synset group) as the length of the shortest path from the target synset to the root synset (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth} displays the results for different depth ranges. Performance drops steadily as we go deeper in the hierarchy. Lower levels of WordNet hierarchy contain a many scientific terms and names of species such as types of cattle (e.g., \textit{cattalo}, \textit{hereford}, \textit{galloway}). These results suggest that LMs lack the knowledge to distinguishing these terms based on their definitions.}
 
 \textbf{Analysis.}
 The correct definition of the medium frequency verb `beckon' is  `signal with the hands or nod'. GPT-2$_{xl}$ predicts  `signal by winking'.
@@ -529,7 +507,7 @@ This points to an important future goal for LMs: they should be developed to gai
      15-19 & 928 & 13 & 0.67 & 31.5 \\ \hline
      
     \end{tabular}
-    \caption{RS and P@1 results for GPT-2$_{xl}$ model on W2D task for WordNet nouns based on the depth of the synset in WordNet hierarchy. \# of candidates, RS and P@1 are given as the average across all samples within the given depth range. }
+    \caption{RS and P@1 for GPT-2$_{xl}$ model on W2D task for WordNet nouns based on the depth of the synset in WordNet hierarchy. \# of candidates, RS and P@1 are given as the average across all samples within the given depth range. }
     \label{tab:WN_depth}
 \end{table}
 
@@ -555,6 +533,31 @@ This points to an important future goal for LMs: they should be developed to gai
     \label{tab:freq_results_W2D}
 \end{table}
 
+\textcolor{blue}{
+\textbf{Human performance on WDLAMPro.}
+It is infeasible to evaluate human performance on the entirety of WDLAMPro. However, we provide a comparison with humans on a small subset of WDLAMPro in order to provide an intuition about the difficulty of the tasks. For each of the tasks, 20 synset groups that have maximum 10 candidates are randomly sampled from WDLAMPro. Then $n$ native English speakers are asked to rank the candidates. Table \ref{tab:human_eval} displays the average performance of the human participants as well as the language models on this subset. }
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|rrrr}
+        \hline
+         \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{W2D}} & \multicolumn{2}{c}{\textbf{D2W}} \\
+         & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
+     Bert$_{b}$ & 0 & 0 & 0 & 0 \\
+     Bert$_{l}$ & 0 & 0 & 0 & 0 \\
+     Roberta$_{b}$ & 0 & 0 & 0 & 0 \\
+     Roberta$_{l}$ & 0 & 0 & 0 & 0 \\ \hline
+     GPT-2$_{s}$ & 0 & 0 & 0 & 0 \\
+     GPT-2$_{m}$ & 0 & 0 & 0 & 0 \\
+     GPT-2$_{l}$ & 0 & 0 & 0 & 0 \\
+     GPT-2$_{xl}$ & 0 & 0 & 0 & 0 \\ \hline 
+     Human & 0 & 0 & 0 & 0 \\ \hline 
+     
+    \end{tabular}
+    \caption{LM and human performance on a small subset of WDLAMPro for }
+    \label{tab:human_eval}
+\end{table}
 
 
 \section{Conclusion}

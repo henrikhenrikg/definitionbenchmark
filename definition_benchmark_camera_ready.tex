@@ -167,7 +167,7 @@ words extracted from WordNet.
     %  exsert.v.01 & thrust or extend out \\ \hline
    
     \end{tabular}
-    \caption{Five candidates of ${\cal G}(t)$ for $t$=  \emph{a\_cappella\_singing.n.01} and their definitions} 
+    \caption{Five candidates from ${\cal G}(t)$ for $t$=  \emph{a\_cappella\_singing.n.01} and their definitions} 
     \label{tab:dataset_samples}
 \end{table*}
 
@@ -188,26 +188,36 @@ words extracted from WordNet.
 The existing probing datasets mainly focus on investigating
 the knowledge about relations between words or
 entities. However, a more direct way of testing whether a
-language model understands the meaning of a word is to
-use its dictionary definition. If a pretrained
-language model truly understands the meaning of a word, then
-it should be able to
-match a word with its dictionary definition. 
-Based on this motivation, we introduce the \textit{Word Definitions Language
-  Model Probing} (WDLMPro) dataset; it is a challenging
-benchmark for testing NLP models for their ability to
-understand words.
-WDLMPro is essentially a set of
-thousands of synset groups; each synset group consists
-of a target word (with its definition) and its taxonomic sisters
-(with their definition) that have some similarity to the target. \textcolor{blue}{ Using taxonomic sisters, rather than random word groups, makes the task significantly more challenging for statistical models that are based on distributional hypothesis since these words tend to have similar distributional characteristics \cite{lenci08distributional}. }
-We evaluate two masked language models, BERT and
-RoBERTa, and the auto-regressive model GPT-2 on WDLMPro using two different probing tests\textcolor{blue}{: (i) match definition to word (D2W) (ii) match word to definition (W2D). We also provide a baseline using static fastText embeddings \cite{mikolov18fastText}.}
-We find that all three language models \textcolor{blue}{perform significantly better than the baseline. Nevertheless, they} have great difficulty matching
-words and their definitions, implying a poor understanding
-of word meaning.
-This is an important result that could
-help guide research on LMs in the future.
+language model understands the meaning of a word is to use
+its dictionary definition. If a pretrained language model
+truly understands the meaning of a word, then it should be
+able to match a word with its dictionary definition.  Based
+on this motivation, we introduce the \textit{Word
+  Definitions Language Model Probing} (WDLMPro) dataset; it
+is a challenging benchmark for testing NLP models for their
+ability to understand words.  WDLMPro is essentially a set
+of thousands of synset groups; each synset group consists of
+a target word (with its definition) and its taxonomic
+sisters (with their definitions).
+%that have some similarity
+%to the target.
+\textcolor{blue}{ Using taxonomic sisters,
+  rather than random word groups, makes the task
+  significantly more challenging for statistical models that
+  are based on the distributional hypothesis since these words
+  tend to have similar distributional characteristics
+  \cite{lenci08distributional}. } We evaluate two masked
+language models, BERT and RoBERTa, and the auto-regressive
+model GPT-2 on WDLMPro using two different probing
+tests\textcolor{blue}{: (i) match definition to word (D2W)
+  (ii) match word to definition (W2D). We also provide a
+  baseline using static fastText embeddings
+  \cite{mikolov18fastText}.}  We find that all three
+language models \textcolor{blue}{perform significantly
+  better than the baseline. Nevertheless, they} have great
+difficulty matching words and their definitions, implying a
+poor understanding of word meaning.  This is an important
+result that could help guide research on LMs in the future.
 
 \section{WDLMPro}
 In this section,
@@ -395,9 +405,18 @@ large, xl).
 For RoBERTa, we capitalize the first letter of the candidate
 noun since pretrained RoBERTa models are case sensitive
 and expect a capital letter at the beginning of a
-sentence\footnote{Not using capitalization resulted in poor performance for single token target words for D2W.}.
+sentence.\footnote{Not using capitalization resulted in poor performance for single token target words for D2W.}
 
-\textcolor{blue}{In addition to the deep contextual language models, we also provide a baseline using fastText static word embeddings\footnote{We use `crawl-300d-2M-subword' model from https://fasttext.cc/docs/en/english-vectors.html} \cite{mikolov18fastText}. For fastText embeddings, we tokenize the candidates and their definitions using NLTK tokenizer and represent them with their average vector. We rank candidates based on their cosine similarity to target embedding. }
+\textcolor{blue}{In addition to the deep contextual language
+  models, we also provide a baseline using fastText static
+  word embeddings\footnote{We use the crawl-300d-2M-subword
+    model from
+    https://fasttext.cc/docs/en/english-vectors.html}
+  \cite{mikolov18fastText}. For fastText embeddings, we
+  tokenize the candidates and their definitions using the
+  NLTK tokenizer and represent them with their average
+  vector. We rank candidates based on their cosine
+  similarity to the target embedding. }
 %
 
 \subsection{Measures}
@@ -432,7 +451,12 @@ For W2D, best performance is achieved by GPT-2$_{xl}$  for nouns (47.3 P@1, 0.81
 Performance on D2W is much lower than for W2D for all models. 
 For nouns, RoBERTa large and GPT-2$_{xl}$ perform similarly (28.8 and 29.8 P@1, 0.70 and 0.73 RS) while RoBERTa large achieves the best results for verbs (38.6 P@1, 0.80 RS).
 Poor performance on D2W compared to W2D might be due to language models' ability to distinguish different definitions better than individual words since definitions are more informative  than individual words. 
-\textcolor{blue}{Overall GPT-2 models perform better than masked language models (with the exception of Roberta large for verbs), despite using a single pattern as opposed to the multiple patterns used by masked language models. This might indicate that ALM objective is better at learning word meaning than MLM objective. }
+\textcolor{blue}{Overall GPT-2 models perform better than
+  masked language models (with the exception of Roberta
+  large for verbs), despite using a single pattern as
+  opposed to the multiple patterns used by masked language
+  models. This might indicate that the ALM objective is
+  better at learning word meaning than the MLM objective. }
 
 \begin{table}
     \centering
@@ -486,7 +510,23 @@ Even for frequent words, P@1 is never above 55.
     \label{tab:results_D2W}
 \end{table}
 
+<<<<<<< HEAD
+\textcolor{blue}{We additionally break down the results
+  based on the depths of the synsets in the WordNet
+  hierarchy. Specifically, we investigate the performance of
+  the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we
+  take the depth of a synset group as the length of the
+  shortest path from the target synset to the root synset
+  (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth}
+  displays the results for different depth
+  ranges. Performance drops steadily as we go deeper in the
+  hierarchy. Lower levels of the WordNet hierarchy contain
+  many scientific terms and names of species such as types
+  of cattle. These results suggest that even very large LMs
+  lack the knowledge necessary to distinguish these terms.}
+=======
 \textcolor{blue}{We additionally break down the results based on the depths of the synsets in the WordNet hierarchy. Specifically, we investigate the performance of the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we take the depth of a sample (i.e., synset group) as the length of the shortest path from the target synset to the root synset (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth} displays the results for different depth ranges. Performance drops steadily as we go deeper in the hierarchy. Lower levels of WordNet hierarchy contain a many scientific terms and names of species such as types of cattle (e.g., \textit{cattalo}, \textit{hereford}, \textit{galloway}). These results suggest that LMs lack the knowledge to distinguishing these terms based on their definitions.}
+>>>>>>> 650aff77c93cf1d872fa7ce317d270babafd4532
 
 \textbf{Analysis.}
 The correct definition of the medium frequency verb `beckon' is  `signal with the hands or nod'. GPT-2$_{xl}$ predicts  `signal by winking'.
@@ -499,15 +539,20 @@ This points to an important future goal for LMs: they should be developed to gai
     \centering
     \begin{tabular}{l|rrrr}
         \hline
-         \textbf{Depth} & \textbf{\# of samp.} & \textbf{\# of cand.} & \textbf{RS} & \textbf{P@1} \\ \hline
-     3-5 & 2106 & 110 & 0.94 & 62.9 \\
-     6-8 & 25232 & 53 & 0.83 & 49.0 \\
-     9-11 & 18521 & 45 & 0.81 & 46.6 \\
-     12-14 & 4473 & 19 & 0.74 & 37.4 \\ 
-     15-19 & 928 & 13 & 0.67 & 31.5 \\ \hline
+         \textbf{Depth} & \textbf{\# synsets} & \textbf{\# cand.} & \textbf{RS} & \textbf{P@1} \\ \hline
+     3--5 & 2106 & 110 & 0.94 & 62.9 \\
+     6--8 & 25,232 & 53 & 0.83 & 49.0 \\
+     9--11 & 18,521 & 45 & 0.81 & 46.6 \\
+     12--14 & 4473 & 19 & 0.74 & 37.4 \\ 
+     15--19 & 928 & 13 & 0.67 & 31.5 \\ \hline
      
     \end{tabular}
+<<<<<<< HEAD
+    \caption{RS and P@1 results for GPT-2$_{xl}$  on W2D for
+      nouns from different  depths of the WordNet hierarchy. \# of candidates, RS and P@1 are given as the average across all synsets within the given depth range. }
+=======
     \caption{RS and P@1 for GPT-2$_{xl}$ model on W2D task for WordNet nouns based on the depth of the synset in WordNet hierarchy. \# of candidates, RS and P@1 are given as the average across all samples within the given depth range. }
+>>>>>>> 650aff77c93cf1d872fa7ce317d270babafd4532
     \label{tab:WN_depth}
 \end{table}
 
@@ -576,7 +621,10 @@ that, despite their remarkable performance on many
 downstream tasks, these models struggle to match a word and
 its true definition, suggesting an insufficient
 understanding of word meaning.
-\textcolor{blue}{Relatively poor performance of these powerful models on WDLMPro might be seen as an argument for the limitations of the distributional systems and need for incorporating external knowledge.} 
+\textcolor{blue}{Relatively poor performance of these
+  powerful models on WDLMPro might be seen as an argument
+  for the limitations of purely distributional systems and
+  the need for incorporating external knowledge.} 
 WDLMPro provides an important
 evaluation benchmark, encouraging design and training of
 models with precise word understanding.

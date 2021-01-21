@@ -30,7 +30,7 @@
 % and will typically save some space.
 \usepackage{microtype}
 
-%\aclfinalcopy % Uncomment this line for the final submission
+\aclfinalcopy % Uncomment this line for the final submission
 %\def\aclpaperid{***} %  Enter the acl Paper ID here
 
 %\setlength\titlebox{5cm}
@@ -47,14 +47,10 @@
 % Does He Wink or Does He Nod?
 A Challenging Benchmark for Evaluating Word Understanding of Language Models based on Word Definitions}
 
-\author{Lutfi Kerem Senel \\
+\author{Lutfi Kerem Senel {\normalfont and} Hinrich Schütze \\
   Center for Information and Language Processing (CIS), LMU Munich, Germany \\
-%   \texttt{lksenel@cis.lmu.de} \\\And
-%   Timo Shick \\
-%   Center for Information and Language Processing (CIS), LMU Munich, Germany \\\And
-  Hinrich Schütze \\
-    Center for Information and Language Processing (CIS), LMU Munich, Germany \\
-  \texttt{inquiries@cislmu.org} \\
+   \texttt{lksenel@gmail.com} 
+%   \texttt{inquiries@cislmu.org} \\
   }
 
 \date{}
@@ -193,7 +189,7 @@ its dictionary definition. If a pretrained language model
 truly understands the meaning of a word, then it should be
 able to match a word with its dictionary definition.  Based
 on this motivation, we introduce the \textit{Word
-  Definitions Language Model Probing} (WDLMPro) dataset; it
+  Definitions Language Model Probing} (WDLMPro) dataset\footnote{WDLAMPro and evaluation scripts are available at \href{https://github.com/lksenel/definition_benchmark}{https://github.com/lksenel/definition\_benchmark}}; it
 is a challenging benchmark for testing NLP models for their
 ability to understand words.  WDLMPro is essentially a set
 of thousands of synset groups; each synset group consists of
@@ -203,7 +199,7 @@ sisters (with their definitions).
 %to the target.
 \textcolor{blue}{ Using taxonomic sisters,
   rather than random word groups, makes the task
-  much more challenging for statistical models that
+  more challenging for statistical models that
   are based on the distributional hypothesis since these words
   tend to have similar distributional characteristics
   \cite{lenci08distributional}. } We evaluate two masked
@@ -588,14 +584,14 @@ It is infeasible to evaluate human performance on the entirety of WDLAMPro. Howe
         \hline
          \multirow{2}{*}{\textbf{Model}} & \multicolumn{2}{c}{\textbf{W2D}} & \multicolumn{2}{c}{\textbf{D2W}} \\
          & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} & \multicolumn{1}{c}{P@1} & \multicolumn{1}{c}{RS} \\ \hline
-     Bert$_{b}$ & 0 & 0 & 0 & 0 \\
-     Bert$_{l}$ & 0 & 0 & 0 & 0 \\
-     Roberta$_{b}$ & 0 & 0 & 0 & 0 \\
-     Roberta$_{l}$ & 0 & 0 & 0 & 0 \\ \hline
-     GPT-2$_{s}$ & 0 & 0 & 0 & 0 \\
-     GPT-2$_{m}$ & 0 & 0 & 0 & 0 \\
-     GPT-2$_{l}$ & 0 & 0 & 0 & 0 \\
-     GPT-2$_{xl}$ & 0 & 0 & 0 & 0 \\ \hline 
+     Bert$_{b}$ & 60.0 & 0.84 & 35.0 & 0.64 \\
+     Bert$_{l}$ & 65.0 & 0.74 & 35.0 & 0.69 \\
+     Roberta$_{b}$ & 50.0 & 0.78 & 60.0 & 0.81 \\
+     Roberta$_{l}$ & 55.0 & 0.80 & 45.0 & 0.69 \\ \hline
+     GPT-2$_{s}$ & 0.69 & 35.0 & 45.0 & 0.71 \\
+     GPT-2$_{m}$ & 0.80 & 50.0 & 50.0 & 0.73 \\
+     GPT-2$_{l}$ & 0.84 & 60.0 & 45.0 & 0.75 \\
+     GPT-2$_{xl}$ & 0.76 & 50.0 & 45.0 & 0.79 \\ \hline 
      Human & 0 & 0 & 0 & 0 \\ \hline 
      
     \end{tabular}

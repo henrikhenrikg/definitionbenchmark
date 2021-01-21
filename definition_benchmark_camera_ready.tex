@@ -76,7 +76,7 @@ $>>>$\hspace{1cm}}}}}
 \begin{abstract}
 
 Recent progress in pretraining language models on large
-corpora has resulted in significant performance gains on many NLP
+corpora has resulted in large performance gains on many NLP
 tasks. These large models acquire linguistic knowledge
 during pretraining, which helps to improve
 performance on downstream tasks via fine-tuning. To assess
@@ -107,18 +107,18 @@ corpora and increasing computational
 power. Pretrained word embeddings
 \cite{mikolov13word2vec_b, pennington14glove} popularized
 the use of distributed word representations, which became a
-fundamental building block for NLP systems. Static word
-embeddings were followed by, generally LSTM based, deep
-contextual representations of words that are learned on
-large corpora via unsupervised language modeling objective
-\cite{peters18ELMO}. Large performance gains are obtained
-by fine-tuning these models on particular tasks after
+fundamental building block for NLP systems. 
+\citet{peters18ELMO} introduced LSTM-based deep
+contextual representations 
+and obtained 
+large performance gains 
+by fine-tuning on  tasks after
 unsupervised pretraining \cite{radford18fineTuning,
-  howard18ULMFiT}. More recently, attention based
-transformer architecture is shown to use context more
+  howard18ULMFiT}. More recently, the attention based
+transformer architecture was shown to use context more
 effectively \cite{vaswani17transformers} and several
 subsequent models achieved state of the art results in many
-NLP tasks by combining transformer architecture with
+NLP tasks by combining the transformer architecture with
 unsupervised pretraining and task specific fine-tuning
 \cite{devlin19BERT, liu19RoBERTa}. \newcite{Radford19GPT2}
 showed that language models can be applied to a variety of
@@ -203,7 +203,7 @@ sisters (with their definitions).
 %to the target.
 \textcolor{blue}{ Using taxonomic sisters,
   rather than random word groups, makes the task
-  significantly more challenging for statistical models that
+  much more challenging for statistical models that
   are based on the distributional hypothesis since these words
   tend to have similar distributional characteristics
   \cite{lenci08distributional}. } We evaluate two masked
@@ -213,7 +213,7 @@ tests\textcolor{blue}{: (i) match definition to word (D2W)
   (ii) match word to definition (W2D). We also provide a
   baseline using static fastText embeddings
   \cite{mikolov18fastText}.}  We find that all three
-language models \textcolor{blue}{perform significantly
+language models \textcolor{blue}{perform clearly
   better than the baseline. Nevertheless, they} have great
 difficulty matching words and their definitions, implying a
 poor understanding of word meaning.  This is an important
@@ -261,7 +261,7 @@ Table
   G} (t)$ 
 and their definitions
 for the target
-\emph{a\_cappella\_singing.n.01}. (see appendix for the target \emph{beckon.v.01}.)
+\emph{a\_cappella\_singing.n.01} (see appendix for the target \emph{beckon.v.01}.)
 Table \ref{tab:dataset_stats} shows statistics of the dataset.
   
 
@@ -408,11 +408,16 @@ and expect a capital letter at the beginning of a
 sentence.\footnote{Not using capitalization resulted in poor performance for single token target words for D2W.}
 
 \textcolor{blue}{In addition to the deep contextual language
-  models, we also provide a baseline using fastText static
+  models, we also provide  fastText static
   word embeddings\footnote{We use the crawl-300d-2M-subword
     model from
     https://fasttext.cc/docs/en/english-vectors.html}
-  \cite{mikolov18fastText}. For fastText embeddings, we
+  \cite{mikolov18fastText} as a baseline.\footnote{A
+    reviewer suggests that it would also be interesting to
+    investigate the performance of supervised approaches,
+    e.g., ranking models. Our main
+    focus here is the lexical knowledge acquired in
+    pretraining, so we leave this for future work.} For fastText embeddings, we
   tokenize the candidates and their definitions using the
   NLTK tokenizer and represent them with their average
   vector. We rank candidates based on their cosine
@@ -456,7 +461,7 @@ Poor performance on D2W compared to W2D might be due to language models' ability
   large for verbs), despite using a single pattern as
   opposed to the multiple patterns used by masked language
   models. This might indicate that the ALM objective is
-  better at learning word meaning than the MLM objective. }
+  better at learning word meaning than the MLM objective.}
 
 \begin{table}
     \centering
@@ -482,8 +487,8 @@ Poor performance on D2W compared to W2D might be due to language models' ability
 \end{table}
 
 
-We investigate the effect of frequency on the models' understanding of word meaning.
-To this end, we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 
+To investigate the effect of frequency on the models' understanding of word meaning,
+we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 
 We focus on nouns since most verbs in our dataset are relatively frequent. 
 Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words. (See appendix for D2W results.) 
 Even for frequent words, P@1 is never above 55.
@@ -511,16 +516,16 @@ Even for frequent words, P@1 is never above 55.
 \end{table}
 
 \textcolor{blue}{We additionally break down the results
-  based on the depths of the synsets in the WordNet
+  based on the depth of the synsets in the WordNet
   hierarchy. Specifically, we investigate the performance of
   the GPT-2$_{xl}$ model on W2D for WordNet nouns, where we
   take the depth of a synset group as the length of the
   shortest path from the target synset to the root synset
   (i.e., \textit{entity.n.01}). Table \ref{tab:WN_depth}
-  displays the results for different depth
-  ranges. Performance drops steadily as we go deeper in the
+shows that
+  performance drops steadily as we go deeper in the
   hierarchy. Lower levels of the WordNet hierarchy contain
-  many scientific terms and names of species such as types
+  many scientific terms and names of (sub)species such as types
   of cattle (e.g., \textit{cattalo},
   \textit{hereford}, \textit{galloway}). These results suggest that even very large LMs
   lack the knowledge necessary to distinguish these terms.}
@@ -567,13 +572,14 @@ This points to an important future goal for LMs: they should be developed to gai
      Random & 6.6 & 7.0 & 8.2 & 7.6 \\ \hline 
      
     \end{tabular}
-    \caption{P@1 scores on W2D for nouns based on target word frequency.}
+    \caption{P@1 scores on W2D for nouns of different
+      frequency ranges}
     \label{tab:freq_results_W2D}
 \end{table}
 
 \textcolor{blue}{
 \textbf{Human performance on WDLAMPro.}
-It is infeasible to evaluate human performance on the entirety of WDLAMPro. However, we provide a comparison with humans on a small subset of WDLAMPro in order to provide an intuition about the difficulty of the tasks. For each of the tasks, 20 synset groups that have maximum 10 candidates are randomly sampled from WDLAMPro. Then $n$ native English speakers are asked to rank the candidates. Table \ref{tab:human_eval} displays the average performance of the human participants as well as the language models on this subset. }
+It is infeasible to evaluate human performance on the entirety of WDLAMPro. However, we provide a comparison with humans on a small subset of WDLAMPro to provide an intuition about the difficulty of the task. For each of the tasks, 20 synset groups that have maximum 10 candidates are randomly sampled from WDLAMPro. Then $n$ native English speakers are asked to rank the candidates. Table \ref{tab:human_eval} displays the average performance of the human participants as well as the language models on this subset. }
 
 
 \begin{table}
@@ -615,12 +621,16 @@ downstream tasks, these models struggle to match a word and
 its true definition, suggesting an insufficient
 understanding of word meaning.
 \textcolor{blue}{Relatively poor performance of these
-  powerful models on WDLMPro might be seen as an argument
+  powerful models on WDLMPro can be seen as evidence
   for the limitations of purely distributional systems and
   the need for incorporating external knowledge.} 
 WDLMPro provides an important
 evaluation benchmark, encouraging design and training of
 models with precise word understanding.
+
+\textbf{Acknowledgements.} We thank
+the anonymous reviewers for their insightful comments and suggestions.
+This work was funded by the European Research Council (ERC \#740516).
 
 \bibliography{definition_benchmark}
 \bibliographystyle{acl_natbib}
@@ -641,7 +651,7 @@ models with precise word understanding.
 %      shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
 %      exsert.v.01 & thrust or extend out \\
 %      wink.v.01 & signal by winking \\
-%      nod.v.01 & express or signify by nodding \\\hline
+%      nod.v.01 & express or signifasy by nodding \\\hline
    
 %     \end{tabular}
 %     \caption{Seven candidates of ${\cal G}(t)$ for $t$=  \emph{beckon.v.01} and their definitions} 

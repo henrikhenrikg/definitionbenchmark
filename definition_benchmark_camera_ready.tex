@@ -83,7 +83,7 @@ language models are commonly probed by querying them with
 datasets mainly focus on knowledge about \emph{relations between}
 words and entities. We introduce WDLMPro
 %\footnote{WDLMPro and the evaluation scripts are available at https://github.com/lksenel/definition_benchmark} 
-(Word Definitions Language Model Probing) to \emph{evaluate word understanding
+(Word Definition Language Model Probing) to \emph{evaluate word understanding
   directly} using dictionary definitions of
 words. In our experiments, three popular pretrained
 language models
@@ -183,14 +183,14 @@ words extracted from WordNet.
 \end{table}
 
 The existing probing datasets mainly focus on investigating
-the knowledge about relations between words or
+the knowledge about \emph{relations between} words or
 entities. However, a more direct way of testing whether a
 language model understands the meaning of a word is to use
 its dictionary definition. If a pretrained language model
 truly understands the meaning of a word, then it should be
-able to match a word with its dictionary definition.  Based
+able to match it with its dictionary definition.  Based
 on this motivation, we introduce the \textit{Word
-  Definitions Language Model Probing} (WDLMPro) dataset\footnote{WDLAMPro and evaluation scripts are available at \href{https://www.cis.lmu.de/~lksenel/WDLAMPro.zip}{https://www.cis.lmu.de/\texttildelow lksenel/WDLAMPro.zip}}; it
+  Definition Language Model Probing} (WDLMPro) dataset;\footnote{WDLAMPro and evaluation scripts are available at \href{https://www.cis.lmu.de/~lksenel/WDLAMPro.zip}{https://www.cis.lmu.de/\texttildelow lksenel/WDLAMPro.zip}} it
 is a challenging benchmark for testing NLP models for their
 ability to understand words.  WDLMPro is essentially a set
 of thousands of synset groups; each synset group consists of
@@ -201,7 +201,7 @@ sisters (with their definitions).
 Using taxonomic sisters, rather than random word groups, 
 makes the task more challenging for statistical models 
 that are based on the distributional hypothesis since 
-these words to have similar distributional characteristics
+these words  have similar distributional characteristics
 \cite{lenci08distributional}. We evaluate two masked
 language models, BERT and RoBERTa, and the auto-regressive
 model GPT-2 on WDLMPro using two different probing
@@ -217,7 +217,7 @@ result that could help guide research on LMs in the future.
 
 \section{WDLMPro}
 In this section,
-we introduce  WDLMPro (Word Definitions Language Model
+we introduce  WDLMPro (Word Definition Language Model
 Probing), a dataset to test how well NLP models can match
 nouns and verbs with  their
 definitions.
@@ -573,8 +573,19 @@ This points to an important future goal for LMs: they should be developed to gai
     \label{tab:freq_results_W2D}
 \end{table}
 
-\textbf{Human performance on WDLAMPro.}
-It is infeasible to evaluate human performance on the entirety of WDLAMPro. However, we provide a comparison with humans on a small subset of WDLAMPro to provide an intuition about the difficulty of the task. For each of the tasks, 20 synset groups that have maximum 10 candidates are randomly sampled from WDLAMPro. Then 2 native English speakers are asked to rank the candidates. Table \ref{tab:human_eval} displays the average performance of the human participants as well as the language models on this subset. For both of the tasks, performance of the best model is comparable to the average human performance.
+\textbf{Human performance on WDLAMPro.}  It is beyond the
+scope of this paper to evaluate human performance on the
+entirety of WDLAMPro. However, we provide a comparison with
+human performance on a small subset to provide
+an intuition about the difficulty of the task. For each of
+the two tasks, 20 synset groups that have a maximum of 10
+candidates are randomly sampled from WDLAMPro. Then two
+native English speakers are asked to rank the
+candidates. Table \ref{tab:human_eval} displays the average
+performance of the human participants and the language
+models on this subset. For both tasks, performance of the
+best model is comparable to the average human performance.
+
 
 
 \begin{table}
@@ -623,7 +634,8 @@ WDLMPro provides an important
 evaluation benchmark, encouraging design and training of
 models with precise word understanding.
 
-\textbf{Acknowledgements.} We thank
+\textbf{Acknowledgements.} We thank Denis Peskov and ?? for
+helping out with the human evaluation and
 the anonymous reviewers for their insightful comments and suggestions.
 This work was funded by the European Research Council (ERC \#740516).
 

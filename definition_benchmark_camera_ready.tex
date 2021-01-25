@@ -483,7 +483,8 @@ better at learning word meaning than the MLM objective.
 \end{table}
 
 
-To investigate the effect of frequency on the models' understanding of word meaning,
+To investigate the effect of frequency,
+%on the models' understanding of word meaning,
 we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 
 We focus on nouns since most verbs in our dataset are relatively frequent. 
 Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words. (See appendix for D2W results.) 
@@ -586,7 +587,14 @@ performance of the human participants and the language
 models on this subset. For both tasks, performance of the
 best model is comparable to the average human performance.
 
-
+Human performance is the upper bound for many NLP
+tasks. We believe that this is not the case for WDLAMPro:
+arguably, we should aim for models with an excellent
+understanding of the meanings of words even if it is better
+than average human understanding. Knowledge based tasks are
+an analogous case: we should strive for models that know as
+many facts as possible even if that performance is above
+average human performance.
 
 \begin{table}
     \centering

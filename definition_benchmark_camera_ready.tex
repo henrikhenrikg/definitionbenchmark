@@ -82,7 +82,6 @@ language models are commonly probed by querying them with
 `fill in the blank' style cloze questions. Existing probing
 datasets mainly focus on knowledge about \emph{relations between}
 words and entities. We introduce WDLMPro
-%\footnote{WDLMPro and the evaluation scripts are available at https://github.com/lksenel/definition_benchmark} 
 (Word Definition Language Model Probing) to \emph{evaluate word understanding
   directly} using dictionary definitions of
 words. In our experiments, three popular pretrained
@@ -148,6 +147,7 @@ words extracted from WordNet.
 
 
 \begin{table*}
+\small
     \centering
     \begin{tabular}{l|l}
     \hline
@@ -170,6 +170,7 @@ words extracted from WordNet.
 
 
 \begin{table}
+% \small
     \centering
     \begin{tabular}{l|cc}
     \hline
@@ -257,7 +258,7 @@ Table
   G} (t)$ 
 and their definitions
 for the target
-\emph{a\_cappella\_singing.n.01} (see appendix for the target \emph{beckon.v.01}.)
+\emph{a\_cappella\_singing.n.01} (see appx. for the target \emph{beckon.v.01}.)
 Table \ref{tab:dataset_stats} shows statistics of the dataset.
   
 
@@ -487,7 +488,7 @@ To investigate the effect of frequency,
 %on the models' understanding of word meaning,
 we stratify words into \textit{rare} (fewer than 10 occurrences), \textit{medium} (10 to 99 occurrences) and \textit{frequent} (100 or more occurrences), based on occurrences in WWC\footnote{Targets that have more than 3 tokens (based on NLTK tokenization) are taken as rare without counting.} (Westbury Wikipedia Corpus, \newcite{WWC}), where we use WWC frequency as a substitute for the models' training corpora. 
 We focus on nouns since most verbs in our dataset are relatively frequent. 
-Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words. (See appendix for D2W results.) 
+Table \ref{tab:freq_results_W2D} shows that, for W2D, all models have a poor understanding of the meaning of rare and medium words. (See appx. for D2W results.) 
 Even for frequent words, P@1 is never above 55.
 
 \begin{table}
@@ -650,49 +651,49 @@ This work was funded by the European Research Council (ERC \#740516).
 \bibliography{definition_benchmark}
 \bibliographystyle{acl_natbib}
 
+\newpage
+\appendix
+\section{Appendices}
+\label{sec:appendix}
 
-% \appendix
-% \section{Appendices}
-% \label{sec:appendix}
-
-% \begin{table*}
-%     \centering
-%     \begin{tabular}{l|l}
-%     \hline
-%     \textbf{synset} & \textbf{definition} \\ \hline
-%      \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
-%      applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
-%      bow.v.01 & bend one's knee or body, or lower one's head \\
-%      shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
-%      exsert.v.01 & thrust or extend out \\
-%      wink.v.01 & signal by winking \\
-%      nod.v.01 & express or signifasy by nodding \\\hline
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|l}
+    \hline
+    \textbf{synset} & \textbf{definition} \\ \hline
+     \emph{beckon.v.01} & \emph{signal with the hands or nod} \\
+     applaud.v.01 & clap one's hands or shout after performances to indicate approval \\
+     bow.v.01 & bend one's knee or body, or lower one's head \\
+     shrug.v.01 & raise one's shoulders to indicate indifference or resignation \\
+     exsert.v.01 & thrust or extend out \\
+     wink.v.01 & signal by winking \\
+     nod.v.01 & express or signify by nodding \\\hline
    
-%     \end{tabular}
-%     \caption{Seven candidates of ${\cal G}(t)$ for $t$=  \emph{beckon.v.01} and their definitions} 
-%     \label{tab:dataset_samples}
-% \end{table*}
+    \end{tabular}
+    \caption{Seven candidates of ${\cal G}(t)$ for $t$=  \emph{beckon.v.01} and their definitions} 
+    \label{tab:dataset_samples}
+\end{table}
 
 
-% \begin{table}
-%     \centering
-%     \begin{tabular}{l|rrrr}
-%     \hline
-%         \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
-%      Bert$_{b}$ & 14.6 & 20.3 & 27.8 & 23.1 \\
-%      Bert$_{l}$ & 11.9 & 19.7 & 32.2 & 24.8\\
-%      Roberta$_{b}$ & 17.3 & 23.7 & 28.9 & 25.2 \\
-%      Roberta$_{l}$ & 17.3 & 25.1 & 33.6 & 28.1 \\ \hline
-%      GPT-2$_{s}$ & 16.3 & 19.1 & 24.7 & 21.2 \\
-%      GPT-2$_{m}$ & 15.7 & 19.0 & 27.0 & 22.6 \\
-%      GPT-2$_{l}$ & 17.8 & 22.2 & 30.8 & 25.9 \\
-%      GPT-2$_{xl}$ & 18.0 & 22.6 & 32.7 & 27.1 \\ \hline
-%      Random & 6.7 & 7.1 & 8.3 & 7.6 \\ \hline 
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|rrrr}
+    \hline
+        \textbf{Model} & \multicolumn{1}{c}{\textbf{rare}} & \multicolumn{1}{c}{\textbf{medium}} & \multicolumn{1}{c}{\textbf{frequent}} & \multicolumn{1}{c}{\textbf{all}} \\ \hline
+     Bert$_{b}$ & 14.6 & 20.3 & 27.8 & 23.1 \\
+     Bert$_{l}$ & 11.9 & 19.7 & 32.2 & 24.8\\
+     Roberta$_{b}$ & 17.3 & 23.7 & 28.9 & 25.2 \\
+     Roberta$_{l}$ & 17.3 & 25.1 & 33.6 & 28.1 \\ \hline
+     GPT-2$_{s}$ & 16.3 & 19.1 & 24.7 & 21.2 \\
+     GPT-2$_{m}$ & 15.7 & 19.0 & 27.0 & 22.6 \\
+     GPT-2$_{l}$ & 17.8 & 22.2 & 30.8 & 25.9 \\
+     GPT-2$_{xl}$ & 18.0 & 22.6 & 32.7 & 27.1 \\ \hline
+     Random & 6.7 & 7.1 & 8.3 & 7.6 \\ \hline 
      
-%     \end{tabular}
-%     \caption{P@1 scores on D2W for nouns based on target word frequency.}
-%     \label{tab:freq_results_D2W}
-% \end{table}
+    \end{tabular}
+    \caption{P@1 scores on D2W for nouns based on target word frequency.}
+    \label{tab:freq_results_D2W}
+\end{table}
 
 
 
